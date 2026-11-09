@@ -5,6 +5,14 @@ date: '2026-10-16'
 city: Hong Kong
 role: Moderator
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-hpediscovermore-tokenfactory-activity-7517895386993168384-2Zm5
+cover: 01.jpg
+captions:
+  01.jpg: Moderating the panel with Flora Ng (HKU) and Patrick Khong (Hong Kong Jockey Club).
+  02.jpg: In conversation with Patrick Khong.
+  03.jpg: Moderating the panel.
+  04.jpg: Leading Through the AI Era at HPE Discover More Hong Kong 2026.
+  05.jpg: Patrick Khong sharing the Hong Kong Jockey Club's perspective.
+  06.jpg: With the panellists and HPE Hong Kong leaders after the session.
 ---
 
 Panel at HPE Discover More Hong Kong, Rosewood Hong Kong. I moderated a conversation with Flora Ng, CIO and Chief Librarian at HKU, and Patrick Khong, Chief Data Officer at the Hong Kong Jockey Club. Our three takeaways:

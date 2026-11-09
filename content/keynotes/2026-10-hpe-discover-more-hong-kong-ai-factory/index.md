@@ -5,6 +5,10 @@ date: '2026-10-16'
 city: Hong Kong
 role: Speaker
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-hpediscovermore-tokenfactory-activity-7517895386993168384-2Zm5
+cover: 01.jpg
+captions:
+  01.jpg: Presenting From AI Factory to Token Economy.
+  02.jpg: With HPE colleagues and Red Hat at the HPE Discover More showcase.
 ---
 
 Session at HPE Discover More Hong Kong, Rosewood Hong Kong, with Prem Naraindas, CEO of Katonic AI, and Aaron Tong, HPE Networking.

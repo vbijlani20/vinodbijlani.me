@@ -214,7 +214,7 @@ def page_head(num, title, intro, facts):
   <div class="crumb"><span class="stop">{num}</span><span class="mono">{e(PROFILE['name'])} · {e(title)}</span></div>
   <h1>{e(title)}</h1>
   <p class="intro">{intro}</p>
-  <div class="facts">{f}</div>
+  {f'<div class="facts">{f}</div>' if f else ''}
 </div></header>"""
 
 
@@ -318,8 +318,7 @@ def build_home():
 
     hero_img = ""
     if PROFILE.get("stage_photo"):
-        hero_img = (f'<figure class="stage-photo"><img src="{pg.rel(PROFILE["stage_photo"])}" alt="{e(PROFILE["name"])} presenting a keynote on stage" width="1100" height="732" fetchpriority="high">'
-                    + (f'<figcaption class="mono">{e(PROFILE["stage_caption"])}</figcaption>' if PROFILE.get("stage_caption") else "") + "</figure>")
+        hero_img = f'<figure class="stage-photo"><img src="{pg.rel(PROFILE["stage_photo"])}" alt="{e(PROFILE["name"])} presenting a keynote on stage" width="1100" height="732" fetchpriority="high"></figure>'
     elif PROFILE.get("photo"):
         hero_img = f'<img class="portrait" src="{pg.rel(PROFILE["photo"])}" alt="{e(PROFILE["name"])}" width="240" height="298">'
     body = f"""<header class="hero" id="top"><div class="wrap">
@@ -332,13 +331,15 @@ def build_home():
       <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
       <a class="btn" href="{e(PROFILE['links']['linkedin'])}">LinkedIn</a>
     </div></div>
-    {hero_img}
-  </div>
-  <div class="stats">
-    <div class="stat"><b>{YEARS}</b><span>years, since {PROFILE.get('career_start')}</span></div>
-    <div class="stat"><b>{N_FORBES}</b><span>Forbes Technology Council articles</span></div>
-    <div class="stat"><b>{len(KEYNOTES)}</b><span>keynotes, panels and talks</span></div>
-    <div class="stat"><b>{N_FILINGS}</b><span>patent filings, {N_INVENTIONS} inventions</span></div>
+    <div class="hero-side">{hero_img}
+      <div class="stats compact">
+        <div class="stat"><b>{YEARS}</b><span>years since {PROFILE.get('career_start')}</span></div>
+        <div class="stat"><b>{len(KEYNOTES)}</b><span>keynotes, panels and talks</span></div>
+        <div class="stat"><b>{len(ARTICLES)}</b><span>articles and expert panels</span></div>
+        <div class="stat"><b>{len(BOOKS)}</b><span>books and chapters</span></div>
+        <div class="stat"><b>{N_FILINGS}</b><span>patent filings</span></div>
+      </div>
+    </div>
   </div>
 </div></header>
 <main>
@@ -537,8 +538,8 @@ def build_speaking():
 
     jump = '<nav class="jump mono" aria-label="On this page"><a href="#all-talks">All talks</a><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a></nav>'
     body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
-                     [(len(KEYNOTES), "talks"), (f"{years[0]}–{years[-1]}", ""), (len(cities), "cities"), (n_photos, "photos")]) + f"""
-<main class="inner"><div class="wrap">{jump}{finder}
+                     []) + f"""
+<main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
 <div class="sec-head" id="all-talks"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
 {"".join(parts)}

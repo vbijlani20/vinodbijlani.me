@@ -480,3 +480,19 @@ footer a:hover{color:var(--ink)}
 .spot-latest li a:hover{color:var(--accent)}
 .spot-latest li .mono{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-bottom:2px}
 @media (max-width:860px){.spots{grid-template-columns:1fr}}
+
+/* v8: compact hero so the buttons sit above the fold */
+.hero{padding:clamp(20px,3vw,40px) 0 24px}
+.hero .kicker{margin-bottom:12px}
+.hero h1{font-size:clamp(48px,7vw,100px)}
+.hero-top .role{margin-top:18px;font-size:clamp(17px,1.6vw,21px)}
+.hero .cta{margin-top:22px}
+.hero-top{align-items:start}
+.hero-side{display:flex;flex-direction:column;gap:22px;padding-top:8px}
+.stats.compact{grid-template-columns:repeat(5,1fr);margin-top:6px}
+.stats.compact .stat{padding:14px 10px 14px 0}
+.stats.compact .stat + .stat{padding-left:12px}
+.stats.compact .stat b{font-size:clamp(24px,2.4vw,34px)}
+.stats.compact .stat span{font-size:12.5px;line-height:1.35;margin-top:6px}
+@media (max-width:700px){.stats.compact{grid-template-columns:repeat(3,1fr)}.stats.compact .stat:nth-child(3){padding-left:12px;border-left:1px solid var(--line)}.stats.compact .stat:nth-child(4){padding-left:0;border-left:0}.stats.compact .stat:nth-child(n+4){border-top:1px solid var(--line)}}
+.ph img,.ev-cover img,.talk-row .thumb{object-position:50% 22%}
