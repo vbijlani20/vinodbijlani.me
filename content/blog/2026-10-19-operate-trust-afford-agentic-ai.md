@@ -3,7 +3,7 @@ title: Can an enterprise operate, trust and afford agentic AI?
 date: 2026-10-19
 summary: One question followed me from Taipei to Hong Kong. Four themes came up in almost every conversation.
 tags: [Agentic AI, Governance, Token factory]
-keynotes: [2026-10-hpe-discover-more-taipei, 2026-10-hpe-discover-more-hong-kong]
+keynotes: [2026-10-hpe-discover-more-taipei, 2026-10-hpe-discover-more-hong-kong, 2026-10-hpe-discover-more-hong-kong-ai-factory]
 infographic:
   type: stats
   title: Two stops, HPE Discover More

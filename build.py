@@ -274,7 +274,10 @@ def build_home():
     route = "".join(f'<li><div class="yr">{e(str(r["year"]))}</div><div class="city">{e(r["city"])}</div><div class="what">{e(r["what"])}</div></li>' for r in PROFILE["route"])
     first, last = PROFILE["name"].split(" ", 1)
 
-    with_photos = [k for k in KEYNOTES if k["photos"]]
+    seen, with_photos = set(), []
+    for k in KEYNOTES:  # one session per event on the home page
+        if k["photos"] and k["event"] not in seen:
+            seen.add(k["event"]); with_photos.append(k)
     featured = with_photos[:3] or KEYNOTES[:3]
     # Photo strip: one photo each from six other presentations, each linking to its event page
     strip = []
@@ -400,7 +403,7 @@ def build_experience():
 
 def talk_kinds(k):
     r = (k.get("role") or "").lower()
-    kinds = [x for x, words in (("keynote", ("keynote",)), ("panel", ("panel",)), ("webinar", ("webinar", "online"))) if any(w in r for w in words)]
+    kinds = [x for x, words in (("keynote", ("keynote",)), ("panel", ("panel", "moderat")), ("webinar", ("webinar", "online"))) if any(w in r for w in words)]
     if "webinar" in (k.get("event") or "").lower() or (k.get("city") or "") == "Online":
         kinds.append("webinar")
     return sorted(set(kinds)) or ["talk"]
