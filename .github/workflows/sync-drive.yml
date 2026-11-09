@@ -1,0 +1,49 @@
+# Every Tuesday morning (Melbourne time) pull new talks, photos and blog posts from Google Drive,
+# commit them, and republish the site. Can also be run by hand from the Actions tab.
+name: Sync from Google Drive
+
+on:
+  schedule:
+    - cron: "23 21 * * 1"   # Monday 21:23 UTC = Tuesday ~8:23am Melbourne
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Pull from Drive
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          DRIVE_WEBSITE_FOLDER_ID: ${{ secrets.DRIVE_WEBSITE_FOLDER_ID }}
+        run: python scripts/sync_drive.py
+      - name: Commit changes
+        id: commit
+        run: |
+          git config user.name "website-bot"
+          git config user.email "website-bot@users.noreply.github.com"
+          git add content
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Sync talks and posts from Google Drive"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml

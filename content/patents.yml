@@ -1,0 +1,27 @@
+# Patents grouped by invention. Each filing: [office, date, Patentscope docId]
+- group: Smart transportation
+  inventions:
+    - title: Personalized in-car variable message signs
+      filings: [[US, 02 Feb 2017, US191885947], [US, 02 Feb 2017, US191882188]]
+    - title: Road condition management
+      filings: [[US, 22 Sep 2016, US177799016]]
+    - title: Safe speed limit recommendation
+      filings: [[US, 24 Mar 2016, US160499719]]
+- group: Networks & systems
+  inventions:
+    - title: Aggregation of mobile broadband network interfaces
+      filings: [[US, 23 Mar 2017, US201393724], [DE, 11 Jul 2013, DE105091535], [GB, 29 May 2013, GB137543689], [WO, 05 Apr 2012, WO2012041604], [US, 29 Mar 2012, US73524709]]
+    - title: Keyboard-based logout
+      filings: [[US, 24 Jun 2010, US43770402]]
+    - title: Making an inference based on cumulative data
+      filings: [[US, 06 May 2010, US43244942]]
+- group: Retail & interactive media
+  inventions:
+    - title: Using RFID tags to embed information and modify audio for items in interactive video
+      filings: [[US, 10 Jan 2013, US76420845], [CN, 11 Aug 2010, CN83991799], [EP, 07 Jul 2010, EP11164067], [KR, 03 Jun 2010, KR10412001], [WO, 02 Apr 2009, WO2009040372], [US, 26 Mar 2009, US43010097], [WO, 26 Jun 2008, WO2008074597], [US, 19 Jun 2008, US42582705]]
+    - title: Interface display device and automated retail system
+      filings: [[JP, 25 Sep 2014, JP273808893], [JP, 31 Jan 2013, JP273293103]]
+    - title: Virtualizing a physical storefront
+      filings: [[US, 23 Mar 2010, US43558201]]
+    - title: Integrating touch, taste and scent with a visual interface for an enhanced user experience
+      filings: [[US, 19 Jun 2008, US42586782], [JP, 03 Jul 2008, JP271756609]]

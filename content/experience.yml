@@ -1,0 +1,107 @@
+# Roles, newest first. Each role lists the projects delivered in it.
+- title: AI Practice Leader, Asia Pacific
+  org: Hewlett Packard Enterprise
+  years: 2019 – present
+  place: Melbourne · Singapore
+  now: true
+  summary: Defines HPE's AI strategy for engagements across Asia Pacific and leads go-to-market for AI factories, sovereign AI, data modernisation and AIOps. Builds partnerships across government, academia, technology vendors and start-ups.
+  projects:
+    - name: Sovereign AI factories
+      body: Architecture and operating models for AI factories that run under an organisation's own legal, operational and technical control, from GPU infrastructure to governed token services.
+      big: Pilot → production
+      small: governed, metered AI at enterprise scale
+    - name: AI-in-a-Box
+      when: From 2020
+      body: A turnkey, full-stack data science platform for data scientists, domain experts and developers, on-premises or at the edge, with provisioning, deployment, managed services and training.
+      big: Turnkey
+      small: data science platform, core to edge
+    - name: AIOps – Autonomous Data Centre
+      when: 2019 – 2020
+      body: End-to-end service monitoring, predictive management and full-stack visibility across hybrid cloud, built with InfoSight, Aruba Central, Splunk and Dynatrace and used by HPE support centres and customers.
+      big: Full stack
+      small: visibility across hybrid cloud
+    - name: Return-to-Work
+      when: 2020
+      body: Entry-to-exit smart building solution that helped organisations reopen offices safely during the pandemic while cutting energy use toward net zero.
+      big: Net zero
+      small: energy reduced while reopening safely
+
+- title: Executive Architect, Smarter Cities
+  org: IBM
+  years: 2015 – 2019
+  place: Singapore
+  summary: Led all Lab Services engagements for Smarter Cities and Safer Planet solutions across transportation, public safety and counter-fraud.
+  projects:
+    - name: Automatic Incident Detection
+      client: Transport for London
+      body: Worked with IBM Research on the models and led a cloud-based implementation spanning a traffic information hub, prediction, incident detection, severity evaluation, simulation and decision support.
+      big: "≤ 5 min"
+      small: incident detection, down from 10–15 minutes
+      feature: true
+    - name: FASTER
+      client: Singapore MRT
+      body: Fusion Analytics for public Transport Emergency Response, combining WiFi, fare card and video data to detect incidents, predict their impact and generate response plans.
+      big: 3 data sources
+      small: fused to predict disruption impact
+    - name: DECON
+      body: Traffic incident detection and response on a streaming AI and IoT architecture that adjusts signal timings, variable message signs and speed limits in real time.
+      big: Real time
+      small: signals, signs and speed limits
+
+- title: Chief Product Architect, Intelligent Operations Center
+  org: IBM
+  years: 2009 – 2015
+  place: Singapore
+  summary: Led architecture of the transportation components of IBM Intelligent Operations Center and a delivery team of about 30 across the US, India and Ireland.
+  projects:
+    - name: NJTA Traffic Management
+      client: New Jersey Turnpike Authority
+      body: Integrated sign view, network view and analytics to automate speed limit and travel message updates on two of the busiest US toll roads. First implementation worldwide of IBM's transportation analytics.
+      big: Multi-year
+      small: agreement won, displacing the incumbent
+    - name: Bus Arrival Prediction
+      when: 2010 – 2011
+      body: Combined traffic prediction models with bus GPS data to sharpen estimated arrival times.
+      big: "±30 s"
+      small: arrival accuracy, improved from ±1 minute
+    - name: Traffic Prediction
+      client: Singapore LTA and NJTA
+      when: 2008 – 2013
+      body: Deployed at client sites, then productised with global-language support and accessibility for visually impaired users.
+      big: 2 countries
+      small: deployed, then productised
+    - name: Transit Analytics
+      when: 2012 – 2014
+      body: Service-oriented platform linking bus operators, traffic systems and third-party apps for arrival prediction, history and operations.
+      big: 5
+      small: core transit services
+
+- title: Senior Solution Architect, Retail
+  org: IBM
+  years: 2005 – 2009
+  place: Pune
+  summary: Lead architect for retail store solutions (point of sale and kiosks), delivering large programmes for Starbucks, Safeway, Cingular, Shoppers Stop and Samsonite.
+
+- title: Infrastructure Architect
+  org: Kroger
+  years: 2003 – 2005
+  place: Cincinnati
+  summary: Implemented e-commerce websites and led digitisation and process automation that cut time requirements by 75%.
+
+- title: Systems Administrator
+  org: Northwestern Mutual
+  years: 2002 – 2003
+  place: Milwaukee
+  summary: Ran the data centre application platform and led a large-scale WebSphere migration.
+
+- title: Administrator
+  org: Citibank
+  years: 2000 – 2002
+  place: New York
+  summary: Administered Ecare, the service and support site for CitiDirect, Citibank's corporate banking application.
+
+- title: Developer
+  org: Kvaerner Powergas India
+  years: 1998 – 2000
+  place: Mumbai
+  summary: Built a web-based intranet application for chemical plant piping requirements.

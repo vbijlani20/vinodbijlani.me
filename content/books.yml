@@ -1,0 +1,45 @@
+# Books and book chapters, newest first.
+- kind: Book
+  title: "Own Your AI: The Sovereign Stack Playbook for Nations and Enterprises"
+  authors: Prem Naraindas and Vinod Bijlani
+  publisher: Self-published (Kindle)
+  year: 2026
+  description: A practical playbook for executives, policymakers and investors moving from dependence on outside AI providers to AI capability under their own control, with strategic frameworks, business-case tools, regional playbooks and a 90-day roadmap.
+  links:
+    - {label: Buy on Amazon, url: "https://www.amazon.com/dp/B0GS7C6DN4"}
+    - {label: Book website, url: "https://ownaistack.com/"}
+  featured: true
+
+- kind: Book chapter
+  title: "The Triple Bottom Line Approach to Sustainable Buildings"
+  book: Sustainable and Healthy Building Environments (Chapter 14)
+  publisher: Nova Science Publishers
+  year: 2022
+  description: How a people, planet and profit framework adopted by the buildings industry can drive the shift to net-zero, healthier and more valuable buildings.
+  links:
+    - {label: Nova Science Publishers, url: "https://novapublishers.com/shop/chapter-14-the-triple-bottom-line-approach-to-sustainable-buildings/"}
+
+- kind: Book chapter
+  title: "Smart City Buildings for a Resilient, Sustainable Future"
+  book: Urban Sustainability and Energy Management of Cities for Improved Health and Well-Being (pp. 179–202)
+  publisher: IGI Global
+  year: 2022
+  description: The data and technology blend that future smart city buildings need to be inclusive, resilient and sustainable.
+  links:
+    - {label: IGI Global, url: "https://doi.org/10.4018/978-1-6684-4030-8"}
+
+- kind: Book chapter
+  title: "Sustainability and Health in a Smart City: Health at the Heart of a Smart City"
+  book: Urban Sustainability and Energy Management of Cities for Improved Health and Well-Being (pp. 203–223)
+  publisher: IGI Global
+  year: 2022
+  description: Why future-proofed, data-driven healthcare belongs at the centre of sustainable smart cities, using AI, IoT and blockchain for predictive and preventive health.
+  links:
+    - {label: IGI Global, url: "https://www.igi-global.com/chapter/sustainability-and-health-in-a-smart-city/303530"}
+
+- kind: Book chapter
+  title: "Transformative Innovation in Course Design for STEM-Based E-Learning"
+  publisher: ""
+  year: ""
+  description: ""
+  links: []
