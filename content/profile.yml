@@ -42,3 +42,10 @@ route:
 # Home page photo: Vinod presenting. 'photo' (headshot) is still used for link previews.
 stage_photo: assets/img/vinod-on-stage.webp
 stage_caption: Keynote at the w.media Sydney Cloud & Datacenter Convention, September 2026. Photo by W.Media.
+# Photo on the right of each section page header (paths as served on the site).
+page_photos:
+  experience: {src: speaking/2026-10-hpe-discover-more-taipei/photos/02.jpg, alt: Vinod at the HPE showcase in Taipei, pos: "50% 62%"}
+  speaking: {src: speaking/2026-10-hpe-discover-more-hong-kong/photos/01.jpg, alt: Vinod moderating a panel at HPE Discover More Hong Kong}
+  blog: {src: gallery/home-17.webp, alt: Vinod presenting an AI factory architecture on stage}
+  publications: {src: speaking/2026-10-hpe-discover-more-hong-kong-ai-factory/photos/01.jpg, alt: Vinod presenting From AI Factory to Token Economy}
+  papers: {src: speaking/2020-11-rics-redas-smart-buildings/photos/02.jpg, alt: Vinod presenting Smart Buildings in a Covid-free World}

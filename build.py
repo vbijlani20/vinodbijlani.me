@@ -208,14 +208,27 @@ def layout(pg, current, title, description, body, image=None):
 """
 
 
-def page_head(num, title, intro, facts):
+def page_art(pg, key):
+    """Right-hand header image for a section page, from profile.yml page_photos."""
+    ph = (PROFILE.get("page_photos") or {}).get(key)
+    if not ph:
+        return ""
+    pos = f' style="object-position:{e(ph["pos"])}"' if ph.get("pos") else ""
+    return f'<figure class="head-art"><img src="{pg.rel(ph["src"])}" alt="{e(ph.get("alt", ""))}"{pos} fetchpriority="high"></figure>'
+
+
+def page_head(num, title, intro, facts, art=""):
     f = "".join(f"<span><b>{e(str(n))}</b>{e(label)}</span>" for n, label in facts)
-    return f"""<header class="page-head"><div class="wrap">
+    text = f"""<div class="head-text">
   <div class="crumb"><span class="stop">{num}</span><span class="mono">{e(PROFILE['name'])} · {e(title)}</span></div>
   <h1>{e(title)}</h1>
   <p class="intro">{intro}</p>
   {f'<div class="facts">{f}</div>' if f else ''}
-</div></header>"""
+</div>"""
+    if art:
+        return f'<header class="page-head with-art"><div class="wrap head-grid">{text}{art}</div></header>'
+    return f'<header class="page-head"><div class="wrap">{text}</div></header>'
+
 
 
 def row(url, side, h3, desc=""):
@@ -397,7 +410,7 @@ def build_experience():
             orgs.append(r["org"])
     n_projects = sum(len(r.get("projects", [])) for r in EXPERIENCE)
     body = page_head("01", "Experience", f"{YEARS} years from server administration to leading AI practice across Asia Pacific, with the projects delivered along the way.",
-                     [(YEARS, "years"), (len(EXPERIENCE), "roles"), (n_projects, "featured projects"), (len(orgs), "organisations")]) + \
+                     [(YEARS, "years"), (len(EXPERIENCE), "roles"), (n_projects, "featured projects"), (len(orgs), "organisations")], page_art(pg, "experience")) + \
         f'<main class="inner"><div class="wrap"><ul class="logos" aria-label="Organisations">{"".join(f"<li>{e(o)}</li>" for o in orgs)}</ul><ol class="timeline">{"".join(items)}</ol></div></main>'
     return pg, layout(pg, "experience", "Experience", f"Career and projects of {PROFILE['name']}: HPE, IBM, Kroger, Northwestern Mutual, Citibank and Kvaerner.", body)
 
@@ -445,11 +458,12 @@ def captioned_grid(pg, photos):
 def build_photo_group(name, items):
     pg = Page(f"speaking/photos/{slugify(name)}/index.html")
     grid = captioned_grid(pg, [("gallery/" + g["file"], g.get("caption", ""), name, None, None) for g in items])
-    body = f"""<header class="page-head"><div class="wrap">
+    art = f'<figure class="head-art"><img src="{pg.rel("gallery/" + items[0]["file"])}" alt="{e(items[0].get("caption", ""))}" fetchpriority="high"></figure>'
+    body = f"""<header class="page-head with-art"><div class="wrap head-grid"><div class="head-text">
   <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">Photo archive · {len(items)} photos</span></div>
   <h1 class="h1-sm">{e(name)}</h1>
   <p class="intro">{e(GROUP_BLURB.get(name, ''))}</p>
-</div></header>
+</div>{art}</div></header>
 <main class="inner"><div class="wrap">{grid}</div></main>"""
     return pg, layout(pg, "speaking", name, f"{name}: photos of {PROFILE['name']}.", body, "gallery/" + items[0]["file"])
 
@@ -538,7 +552,7 @@ def build_speaking():
 
     jump = '<nav class="jump mono" aria-label="On this page"><a href="#all-talks">All talks</a><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a></nav>'
     body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
-                     []) + f"""
+                     [], page_art(pg, "speaking")) + f"""
 <main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
 <div class="sec-head" id="all-talks"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
@@ -570,12 +584,16 @@ def build_keynote(k):
     if related:
         rel_html = '<h2 class="sub-h">Related blog posts</h2><ul class="rows">' + "".join(
             f'<li>{row(pg.rel("blog/" + p["slug"] + "/index.html"), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]))}</li>' for p in related) + "</ul>"
-    body = f"""<header class="page-head"><div class="wrap">
+    art = ""
+    if k["photos"]:
+        cap = (k.get("captions") or {}).get(k["photos"][0].name) or k["event"]
+        art = f'<figure class="head-art"><img src="photos/{e(k["photos"][0].name)}" alt="{e(cap)}" fetchpriority="high"></figure>'
+    body = f"""<header class="page-head{' with-art' if art else ''}"><div class="wrap{' head-grid' if art else ''}"><div class="head-text">
   <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">{e(k.get('role', ''))} · {e(date_display(k.get('date')))}{(' · ' + e(k['city'])) if k.get('city') else ''}</span></div>
   <h1 class="h1-sm">{e(k['title'])}</h1>
   <p class="intro">{e(k['event'])}</p>
   {f'<div class="cta">{btns}</div>' if btns else ''}
-</div></header>
+</div>{art}</div></header>
 <main class="inner"><div class="wrap"><div class="prose">{md(k['body'])}</div>{gallery}{rel_html}</div></main>"""
     img = keynote_photo_rel(k, k["photos"][0]) if k["photos"] else None
     return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img)
@@ -637,7 +655,7 @@ def build_blog_index():
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
         + post_visual(pg, p) + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
-                     [(len(POSTS), "posts"), ("RSS", "feed available")]) + \
+                     [(len(POSTS), "posts"), ("RSS", "feed available")], page_art(pg, "blog")) + \
         f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
     return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on data centres, AI factories, token economics, sovereign AI and governance.", body)
 
@@ -713,7 +731,7 @@ def build_publications():
                  f'<a href="{e(PROFILE["links"]["forbes"])}">Forbes profile ↗</a></p>'
                  f'<div class="focus-grid two">{"".join(cards)}</div>')
     body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
-                     [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles"), (outlets, "outlets")]) + \
+                     [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles"), (outlets, "outlets")], page_art(pg, "publications")) + \
         f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" id="all-publications" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
     return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} for the World Economic Forum, Forbes, CDOTrends and more.", body)
 
@@ -734,7 +752,7 @@ def build_books():
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
     body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), ("Springer · Elsevier · IGI Global · Nova Science", "")]) + \
+                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), ("Springer · Elsevier · IGI Global · Nova Science", "")], '<figure class="head-art book-art"><div class="cover" aria-hidden="true"><span>OWN<br>YOUR<br>AI</span><small>The Sovereign Stack Playbook</small></div></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
@@ -743,7 +761,7 @@ def build_papers():
     pg = Page("papers.html")
     rows = "".join(f'<li>{row(p.get("url", ""), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]), e(p["venue"]))}</li>' for p in PAPERS)
     body = page_head("06", "Papers", "Conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
-                     [(len(PAPERS), "papers"), ("Springer · IEEE", "")]) + \
+                     [(len(PAPERS), "papers"), ("Springer · IEEE", "")], page_art(pg, "papers")) + \
         f'<main class="inner"><div class="wrap"><ul class="rows">{rows}</ul></div></main>'
     return pg, layout(pg, "papers", "Papers", f"Papers by {PROFILE['name']}.", body)
 
@@ -759,7 +777,7 @@ def build_patents():
             cards.append(f'<article class="patent"><h3>{e(inv["title"])}</h3><div class="count">{n}<small>{"filing" if n == 1 else "filings"}</small></div><div class="filings">{fl}</div></article>')
         parts.append(f'<div class="group-title">{e(g["group"])} <span class="mono">{len(g["inventions"])} inventions</span></div><div class="grid2">{"".join(cards)}</div>')
     body = page_head("07", "Patents", "Inventions in data analytics for smart transportation, retail, interactive media and networking. IBM Master Inventor.",
-                     [(N_INVENTIONS, "inventions"), (N_FILINGS, "filings"), (len(OFFICES), "patent offices"), (" · ".join(OFFICES), "")]) + \
+                     [(N_INVENTIONS, "inventions"), (N_FILINGS, "filings"), (len(OFFICES), "patent offices"), (" · ".join(OFFICES), "")], f'<figure class="head-art patent-art" aria-hidden="true"><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor</p></figure>') + \
         f'<main class="inner"><div class="wrap">{"".join(parts)}<p class="note">Each filing links to its record on WIPO Patentscope.</p></div></main>'
     return pg, layout(pg, "patents", "Patents", f"Patents by {PROFILE['name']}, IBM Master Inventor.", body)
 

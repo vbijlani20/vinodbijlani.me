@@ -98,3 +98,7 @@ open _site/index.html
 
 - Add `series: dc` to a post's front matter to include it in the "Data centre and AI factory leadership" section at the top of the blog, and `strand: buildout | factory | economics` to choose its group.
 - Posts without an infographic image get a tile built from the `infographic` title and headline `stat`.
+
+## Page header photos
+
+Each section page shows a photo on the right of its title, set under `page_photos` in `content/profile.yml` (`src` as served on the site, `alt`, and optional `pos` to choose the crop, e.g. "50% 30%"). Books shows the book cover and Patents a numbers panel. Event pages use their cover photo automatically.
