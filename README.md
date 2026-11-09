@@ -7,7 +7,7 @@ Personal website of Vinod Bijlani, hosted free on GitHub Pages and updated autom
 | You want to add… | Do this | Goes live |
 |---|---|---|
 | **A keynote or panel, with photos** | In Google Drive, open `Website/Keynotes`, create a folder named `2026-11 Event name, City`, and drop the photos in. Optionally add a Doc called `notes` (format below). | Next Tuesday morning, or straight away if you click **Run workflow** under *Actions → Sync from Google Drive* |
-| **A blog post from LinkedIn** | Paste the post into a new Google Doc in `Website/Blog`. To link back to LinkedIn, make the first line `LinkedIn: <post URL>`. | Same as above. The infographic beside the post is built automatically from its bullet points and numbers. |
+| **A blog post from LinkedIn** | Paste the post into a new Google Doc in `Website/Blog`. To link back to LinkedIn, make the first line `LinkedIn: <post URL>`. To show your designed infographic beside it, put the image (GIF, PNG or JPG) in the same folder with the same name as the Doc. | Same as above. The infographic beside the post is built automatically from its bullet points and numbers. |
 | **A Forbes or other article** | Add one line to `content/articles.yml` (copy the line above it). You can do this on github.com or in the GitHub phone app. | About 1 minute after saving |
 | **Anything else** | Edit the matching file in `content/`. | About 1 minute after saving |
 

@@ -2,6 +2,8 @@
 title: I flew into Taiwan thinking about chips. I flew out thinking about tokens.
 date: 2026-10-21
 summary: The industry is solving the compute problem. Enterprises are now facing the consumption problem, and that needs a governed token factory.
+image: media/token-factory-10-features.gif
+image_alt: "GPU plus model is not a token factory: ten capabilities a token factory needs"
 tags: [Agentic AI, AI economics, Token factory]
 related:
   - {label: "Forbes: Every CIO should consider a hybrid token factory", url: "https://www.forbes.com/councils/forbestechcouncil/2026/08/05/every-cio-should-consider-a-hybrid-token-factory-heres-how-to-build-one/"}

@@ -269,7 +269,11 @@ def build_home():
         img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
         talks.append(f'<a class="talk-card" href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{img}<div class="body"><span class="mono">{e(date_display(k.get("date")))} · {e(k.get("role", ""))}</span><h3>{e(k["title"])}</h3><p>{e(k["event"])}</p></div></a>')
 
-    posts = "".join(f'<li>{row(pg.rel("blog/" + p["slug"] + "/index.html"), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]), e(p.get("summary", "")))}</li>' for p in POSTS[:3])
+    posts = "".join(
+        f'<a class="talk-card" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">'
+        + (f'<img class="ig-thumb" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else '<div class="ph" aria-hidden="true"></div>')
+        + f'<div class="body"><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p></div></a>'
+        for p in POSTS[:3])
     forbes = [a for a in ARTICLES if a.get("type") == "article"][:4]
     writing = "".join(f'<li>{row(a["url"], f"<span class=mono>{e(a["outlet"])} · {e(date_display(a["date"]))}</span>", e(a["title"]))}</li>' for a in forbes)
     book = next((b for b in BOOKS if b.get("featured")), None)
@@ -292,8 +296,11 @@ def build_home():
     cards = "".join(f'<a href="{pg.rel(URLS[s])}"><b>{n}</b><h3>{e(t)}</h3><p>{e(d)}</p></a>' for s, n, t, d in explore)
 
     body = f"""<header class="hero" id="top"><div class="wrap">
-  <div class="mono kicker">{e(PROFILE['kicker'])}</div>
-  <h1>{e(first)}<span class="last">{e(last)}</span></h1>
+  <div class="hero-top">
+    <div><div class="mono kicker">{e(PROFILE['kicker'])}</div>
+    <h1>{e(first)}<span class="last">{e(last)}</span></h1></div>
+    {f'<img class="portrait" src="{pg.rel(PROFILE["photo"])}" alt="{e(PROFILE["name"])}" width="240" height="298">' if PROFILE.get("photo") else ''}
+  </div>
   <p class="role"><strong>{e(PROFILE['title'])}, {e(PROFILE['company'])}.</strong> {e(PROFILE['headline'])}</p>
   <div class="cta">
     <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Speaking</a>
@@ -316,7 +323,7 @@ def build_home():
 {book_html}
 <section class="block"><div class="wrap">
   <div class="sec-head"><span class="stop">→</span><h2>From the blog</h2><div class="more"><a href="{pg.rel(URLS['blog'])}">All posts →</a></div></div>
-  <ul class="rows">{posts}</ul>
+  <div class="talk-grid">{posts}</div>
 </div></section>
 <section class="block"><div class="wrap">
   <div class="sec-head"><span class="stop">→</span><h2>Latest in Forbes</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
@@ -420,10 +427,15 @@ def build_keynote(k):
 
 def build_blog_index():
     pg = Page("blog/index.html")
-    rows = "".join(f'<li>{row(pg.rel("blog/" + p["slug"] + "/index.html"), f"<span class=mono>{e(date_display(p["date"]))}</span><span class=chips>" + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:2]) + "</span>", e(p["title"]), e(p.get("summary", "")))}</li>' for p in POSTS)
+    rows = "".join(
+        f'<li><a class="post-row" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">'
+        + f'<div><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p>'
+        + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
+        + (f'<img src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else '')
+        + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
                      [(len(POSTS), "posts"), ("RSS", "feed available")]) + \
-        f'<main class="inner"><div class="wrap"><ul class="rows">{rows}</ul></div></main>'
+        f'<main class="inner"><div class="wrap"><ul class="post-list">{rows}</ul></div></main>'
     return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on AI factories, token economics, sovereign AI and governance.", body)
 
 
@@ -436,6 +448,11 @@ def build_post(p):
     rel = ""
     if related:
         rel = '<div class="post-links"><span class="mono">Read more</span>' + "".join(f'<a href="{e(l["url"])}">{e(l["label"])} ↗</a>' for l in related) + "</div>"
+    side_image = ""
+    if p.get("image"):
+        src = pg.rel("blog/" + p["image"])
+        side_image = (f'<figure class="ig-figure"><a href="{src}" data-lightbox><img src="{src}" alt="{e(p.get("image_alt", p["title"]))}"></a>'
+                      f'<figcaption class="mono">Infographic · tap to enlarge</figcaption></figure>')
     idx = POSTS.index(p)
     nxt = POSTS[idx - 1] if idx > 0 else None
     prv = POSTS[idx + 1] if idx + 1 < len(POSTS) else None
@@ -450,9 +467,9 @@ def build_post(p):
 </div></header>
 <main class="inner"><div class="wrap"><div class="post-grid">
   <article class="prose">{md(p['body'])}{rel}</article>
-  {infographic(p.get('infographic'))}
+  <div class="side-col{' has-image' if p.get('image') else ''}">{side_image}{infographic(p.get('infographic'))}</div>
 </div>{pager}</div></main>"""
-    return pg, layout(pg, "blog", p["title"], p.get("summary", p["title"]), body)
+    return pg, layout(pg, "blog", p["title"], p.get("summary", p["title"]), body, ("blog/" + p["image"]) if p.get("image") else None)
 
 
 def build_publications():
@@ -577,6 +594,8 @@ def main():
             for p in k["photos"]:
                 shutil.copy(p, dest / p.name)
 
+    if (CONTENT / "blog" / "media").exists():
+        shutil.copytree(CONTENT / "blog" / "media", OUT / "blog" / "media", dirs_exist_ok=True)
     (OUT / "feed.xml").write_text(build_feed(), encoding="utf-8")
     public = [pg.path for pg, _ in pages if pg.path not in ("404.html", "roles.html", "projects.html", "certifications.html", "letter-of-appreciation.html")]
     (OUT / "sitemap.xml").write_text(build_sitemap(public), encoding="utf-8")

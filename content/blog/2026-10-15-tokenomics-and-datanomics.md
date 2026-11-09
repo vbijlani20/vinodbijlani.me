@@ -2,6 +2,8 @@
 title: How much does an AI answer really cost?
 date: 2026-10-15
 summary: The token bill is only one part of the economics. Tokenomics plus datanomics shows more of the total cost of enterprise AI.
+image: media/tokenomics-vs-datanomics.gif
+image_alt: "The economics of the enterprise AI factory: tokenomics versus datanomics"
 tags: [AI economics, Data, Tokenomics]
 related:
   - {label: "Forbes: The Unit Economics Of AI: Why Datanomics Will Outweigh Tokenomics", url: "https://www.forbes.com/councils/forbestechcouncil/2026/08/31/the-unit-economics-of-ai-why-datanomics-will-outweigh-tokenomics/"}

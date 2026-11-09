@@ -2,6 +2,8 @@
 title: "Where should this actually run? A practical guide to hybrid AI"
 date: 2026-10-09
 summary: Recurring inference changes the placement economics. Cost, control and performance should decide where each AI workload runs, not habit.
+image: media/four-ways-to-run-ai-compute.gif
+image_alt: "Where should your AI workload run? Four ways to run AI compute"
 tags: [Hybrid AI, AI infrastructure, Sovereign AI]
 related:
   - {label: "Forbes: Which AI Workload Goes Where? A CIO's Guide To Hybrid AI", url: "https://www.forbes.com/councils/forbestechcouncil/2026/10/08/which-ai-workload-goes-where-a-cios-guide-to-hybrid-ai/"}

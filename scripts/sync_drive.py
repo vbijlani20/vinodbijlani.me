@@ -165,7 +165,10 @@ def sync_keynotes(svc, folder, state, log):
 
 
 def sync_blog(svc, folder, state, log):
-    for f in children(svc, folder["id"]):
+    files = children(svc, folder["id"])
+    # An image with the same name as a Doc (e.g. "Datanomics.gif" next to the Doc "Datanomics") becomes that post's infographic
+    images = {Path(f["name"]).stem.strip().lower(): f for f in files if f["mimeType"] in IMAGE_TYPES + ("image/gif",)}
+    for f in files:
         if f["mimeType"] != "application/vnd.google-apps.document" and not f["name"].lower().endswith((".txt", ".md")):
             continue
         if f["id"] in state["blog"]:
@@ -177,6 +180,16 @@ def sync_blog(svc, folder, state, log):
             linkedin, text = m.group(0), text.split("\n", 1)[1]
         when = datetime.fromisoformat(f["createdTime"].replace("Z", "+00:00")).date()
         name, content = textkit.blog_post(text, when, linkedin)
+        img = images.get(Path(f["name"]).stem.strip().lower())
+        if img:
+            ext = ".gif" if img["mimeType"] == "image/gif" else ".jpg"
+            media = CONTENT / "blog" / "media" / (name[:-3] + ext)
+            log.append(f"  + infographic {media.relative_to(ROOT)}")
+            if not DRY:
+                media.parent.mkdir(parents=True, exist_ok=True)
+                raw = download(svc, img)
+                media.write_bytes(raw) if ext == ".gif" else save_photo(raw, media)
+            content = content.replace("\ntags:", f"\nimage: media/{media.name}\ntags:", 1)
         dest = CONTENT / "blog" / name
         log.append(f"new post: {dest.relative_to(ROOT)}")
         if not DRY:
