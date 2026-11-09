@@ -1,20 +1,19 @@
 # Who you are. Edit any line here and the whole site updates on the next build.
 name: Vinod Bijlani
-title: AI Practice Leader, Asia Pacific
+title: Distinguished Technologist and AI Practice Leader, Asia Pacific
 company: Hewlett Packard Enterprise
 location: Melbourne, Australia
-email: vinodbijlani@gmail.com
-photo: assets/img/vinod.jpg
+photo: assets/img/vinod.webp
 career_start: 1998
 
 headline: I architect and build sovereign AI factories that give enterprises and nations control over their data, their models and their future.
 
-kicker: AI factories · Sovereign AI · Keynote speaker · Inventor
+kicker: Distinguished Technologist · AI factories · Sovereign AI · Inventor
 
 bio:
   - For more than a decade I worked on smarter cities, designing intelligent transport, traffic and building systems in India, Singapore and the USA. Today I lead the AI practice for Hewlett Packard Enterprise across Asia Pacific, helping enterprises and governments move AI from pilots to governed, production-scale platforms.
   - My work sits where infrastructure, economics and governance meet. I write about AI factories, token economics and sovereign AI for the Forbes Technology Council, where I also lead the Quantum Computing Group, and I co-authored Own Your AI, a playbook for building AI under your own legal, operational and technical control.
-  - I am an IBM Master Inventor with 25 patents in AI, analytics and transport, and an Open Group Distinguished Architect.
+  - I am a Distinguished Technologist at HPE, an IBM Master Inventor with 25 patents in AI, analytics and transport, and an Open Group Distinguished Architect.
 
 topics:
   - Sovereign AI factories
@@ -39,4 +38,4 @@ route:
   - {year: "2003", city: Cincinnati, what: Kroger}
   - {year: "2005", city: Pune, what: IBM}
   - {year: "2009", city: Singapore, what: IBM · HPE}
-  - {year: "2019", city: Melbourne, what: HPE}
+  - {year: "2022", city: Melbourne, what: HPE}

@@ -118,6 +118,7 @@ def load_posts():
 
 
 KEYNOTES = load_keynotes()
+GALLERY = load_yaml("gallery.yml") if (CONTENT / "gallery.yml").exists() else []
 POSTS = load_posts()
 N_INVENTIONS = sum(len(g["inventions"]) for g in PATENTS)
 N_FILINGS = sum(len(i["filings"]) for g in PATENTS for i in g["inventions"])
@@ -128,7 +129,7 @@ N_FORBES = sum(1 for a in ARTICLES if a.get("outlet") == "Forbes" and a.get("typ
 
 URLS = {"home": "index.html", "experience": "experience.html", "speaking": "speaking/index.html", "blog": "blog/index.html",
         "publications": "publications.html", "books": "books.html", "papers": "papers.html", "patents": "patents.html"}
-NAV = [("experience", "Experience"), ("speaking", "Speaking"), ("blog", "Blog"), ("publications", "Publications"),
+NAV = [("experience", "Experience"), ("speaking", "Thought Leadership"), ("blog", "Blog"), ("publications", "Publications"),
        ("books", "Books"), ("papers", "Papers"), ("patents", "Patents")]
 
 
@@ -172,11 +173,10 @@ def layout(pg, current, title, description, body, image=None):
   <section class="contact" aria-label="Contact">
     <div>
       <h2>Invite {e(PROFILE['name'].split()[0])} to speak, write or advise.</h2>
-      <p>Keynotes, panels and executive briefings on AI factories, sovereign AI and AI economics. {e(PROFILE['email'])}</p>
+      <p>Keynotes, panels and executive briefings on AI factories, sovereign AI and AI economics. Send a message on LinkedIn.</p>
     </div>
     <div class="cta" style="margin-top:0">
-      <a class="btn primary" href="mailto:{e(PROFILE['email'])}">Email</a>
-      <a class="btn" href="{e(links['linkedin'])}">LinkedIn</a>
+      <a class="btn primary" href="{e(links['linkedin'])}">Connect on LinkedIn</a>
     </div>
   </section>
 </div>
@@ -264,8 +264,13 @@ def build_home():
     route = "".join(f'<li><div class="yr">{e(str(r["year"]))}</div><div class="city">{e(r["city"])}</div><div class="what">{e(r["what"])}</div></li>' for r in PROFILE["route"])
     first, last = PROFILE["name"].split(" ", 1)
 
+    strip_imgs = [(pg.rel("gallery/" + g["file"]), g.get("caption", "")) for g in GALLERY[:6]]
+    stage_strip = ""
+    if strip_imgs:
+        stage_strip = '<div class="stage-strip">' + "".join(f'<a href="{src}" data-lightbox><img src="{src}" alt="{e(c)}" loading="lazy"></a>' for src, c in strip_imgs) + '</div>'
     talks = []
-    for k in KEYNOTES[:3]:
+    featured = [k for k in KEYNOTES if k["photos"]][:3] or KEYNOTES[:3]
+    for k in featured:
         img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
         talks.append(f'<a class="talk-card" href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{img}<div class="body"><span class="mono">{e(date_display(k.get("date")))} · {e(k.get("role", ""))}</span><h3>{e(k["title"])}</h3><p>{e(k["event"])}</p></div></a>')
 
@@ -286,14 +291,14 @@ def build_home():
 </div></div></section>"""
 
     explore = [
-        ("experience", len(EXPERIENCE), "Experience", "Roles and the projects delivered in each, from Mumbai to Melbourne."),
-        ("speaking", len(KEYNOTES), "Speaking", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US."),
-        ("blog", len(POSTS), "Blog", "Field notes on AI factories, token economics and governance, with infographics."),
-        ("publications", len(ARTICLES), "Publications", f"Including {N_FORBES} Forbes Technology Council articles."),
-        ("books", len(BOOKS), "Books", "Own Your AI, plus chapters with IGI Global and Nova Science."),
-        ("patents", N_FILINGS, "Patents", f"{N_INVENTIONS} inventions filed in {len(OFFICES)} patent offices."),
+        ("experience", len(EXPERIENCE), "Experience", "Roles and the projects delivered in each, from Mumbai to Melbourne.", "roles"),
+        ("speaking", len(KEYNOTES), "Thought leadership", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US.", "talks"),
+        ("blog", len(POSTS), "Blog", "Field notes on AI factories, token economics and governance, with infographics.", "posts"),
+        ("publications", len(ARTICLES), "Publications", f"Including {N_FORBES} Forbes Technology Council articles.", "publications"),
+        ("books", len(BOOKS), "Books", "Own Your AI, plus chapters with IGI Global and Nova Science.", "titles"),
+        ("patents", N_FILINGS, "Patents", f"{N_INVENTIONS} inventions filed in {len(OFFICES)} patent offices.", "filings"),
     ]
-    cards = "".join(f'<a href="{pg.rel(URLS[s])}"><b>{n}</b><h3>{e(t)}</h3><p>{e(d)}</p></a>' for s, n, t, d in explore)
+    cards = "".join(f'<a href="{pg.rel(URLS[s])}"><h3>{e(t)} <span aria-hidden="true">→</span></h3><p>{e(d)}</p><span class="mono">{n} {e(u)}</span></a>' for s, n, t, d, u in explore)
 
     body = f"""<header class="hero" id="top"><div class="wrap">
   <div class="hero-top">
@@ -303,11 +308,10 @@ def build_home():
   </div>
   <p class="role"><strong>{e(PROFILE['title'])}, {e(PROFILE['company'])}.</strong> {e(PROFILE['headline'])}</p>
   <div class="cta">
-    <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Speaking</a>
+    <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Thought leadership</a>
     <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
-    <a class="btn" href="mailto:{e(PROFILE['email'])}">Email</a>
+    <a class="btn" href="{e(PROFILE['links']['linkedin'])}">LinkedIn</a>
   </div>
-  <div class="route" aria-label="Career route"><ol>{route}</ol></div>
   <div class="stats">
     <div class="stat"><b>{YEARS}</b><span>years, since {PROFILE.get('career_start')}</span></div>
     <div class="stat"><b>{N_FORBES}</b><span>Forbes Technology Council articles</span></div>
@@ -317,8 +321,9 @@ def build_home():
 </div></header>
 <main>
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Latest on stage</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} talks →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2>Thought leadership</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
   <div class="talk-grid">{''.join(talks)}</div>
+  {stage_strip}
 </div></section>
 {book_html}
 <section class="block"><div class="wrap">
@@ -326,12 +331,16 @@ def build_home():
   <div class="talk-grid">{posts}</div>
 </div></section>
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Latest in Forbes</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2>Latest publications</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
   <ul class="rows">{writing}</ul>
 </div></section>
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>The record</h2></div>
-  <div class="explore">{cards}</div>
+  <div class="sec-head"><span class="stop">→</span><h2>Explore further</h2></div>
+  <div class="explore subtle">{cards}</div>
+</div></section>
+<section class="block"><div class="wrap">
+  <div class="sec-head"><span class="stop">→</span><h2>From Mumbai to Melbourne</h2></div>
+  <div class="route" aria-label="Career route"><ol>{route}</ol></div>
 </div></section>
 </main>"""
     first_photo = next((keynote_photo_rel(k, k["photos"][0]) for k in KEYNOTES if k["photos"]), None)
@@ -393,18 +402,24 @@ def build_speaking():
         c = (k.get("city") or "").replace("ICC ", "")
         if c and c != "Online" and c not in cities:
             cities.append(c)
-    body = page_head("02", "Speaking", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities.",
+    gal = ""
+    if GALLERY:
+        gal = ('<div class="sec-head" style="margin-top:8px"><span class="stop">→</span><h2>On stage</h2></div><div class="gallery-wall">'
+               + "".join(f'<a class="g-item" href="{pg.rel("gallery/" + g["file"])}" data-lightbox><img src="{pg.rel("gallery/" + g["file"])}" alt="{e(g.get("caption", ""))}" loading="lazy"></a>' for g in GALLERY)
+               + '</div><div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Keynotes, panels and talks</h2></div>')
+    body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities.",
                      [(len(KEYNOTES), "talks"), (f"{years[0]}–{years[-1]}", ""), (len(cities), "cities")]) + \
-        f'<main class="inner"><div class="wrap">{"".join(parts)}</div></main>'
-    return pg, layout(pg, "speaking", "Speaking", f"Keynotes and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI.", body)
+        f'<main class="inner"><div class="wrap">{gal}{"".join(parts)}</div></main>'
+    return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI.", body)
 
 
 def build_keynote(k):
     pg = Page(f"speaking/{k['slug']}/index.html")
     gallery = ""
     if k["photos"]:
-        figs = "".join(f'<a class="g-item" href="photos/{e(p.name)}" data-lightbox><img src="photos/{e(p.name)}" alt="{e(k["event"])} photo {i+1}" loading="lazy"></a>' for i, p in enumerate(k["photos"]))
-        gallery = f'<div class="gallery g-{min(len(k["photos"]), 4)}">{figs}</div>'
+        caps = k.get("captions") or {}
+        figs = "".join(f'<a class="g-item" href="photos/{e(p.name)}" data-lightbox><img src="photos/{e(p.name)}" alt="{e(caps.get(p.name) or (k["event"] + " photo " + str(i + 1)))}" loading="lazy"></a>' for i, p in enumerate(k["photos"]))
+        gallery = f'<div class="gallery g-{min(len(k["photos"]), 4)}{" many" if len(k["photos"]) > 4 else ""}">{figs}</div>'
     links = list(k.get("links") or [])
     if k.get("linkedin"):
         links.insert(0, {"label": "Read the LinkedIn post", "url": k["linkedin"]})
@@ -415,7 +430,7 @@ def build_keynote(k):
         rel_html = '<h2 class="sub-h">Related blog posts</h2><ul class="rows">' + "".join(
             f'<li>{row(pg.rel("blog/" + p["slug"] + "/index.html"), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]))}</li>' for p in related) + "</ul>"
     body = f"""<header class="page-head"><div class="wrap">
-  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to all talks">←</a><span class="mono">{e(k.get('role', ''))} · {e(date_display(k.get('date')))}{(' · ' + e(k['city'])) if k.get('city') else ''}</span></div>
+  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">{e(k.get('role', ''))} · {e(date_display(k.get('date')))}{(' · ' + e(k['city'])) if k.get('city') else ''}</span></div>
   <h1 class="h1-sm">{e(k['title'])}</h1>
   <p class="intro">{e(k['event'])}</p>
   {f'<div class="cta">{btns}</div>' if btns else ''}
@@ -548,7 +563,7 @@ def redirect(path, target, label):
 
 def build_404():
     pg = Page("404.html")
-    body = page_head("?", "Page not found", f'The page you were looking for has moved. Try <a href="/speaking">Speaking</a>, the <a href="/blog">blog</a> or <a href="/">the home page</a>.', [])
+    body = page_head("?", "Page not found", f'The page you were looking for has moved. Try <a href="/speaking/">Thought Leadership</a>, the <a href="/blog">blog</a> or <a href="/">the home page</a>.', [])
     return pg, layout(pg, "", "Not found", "Page not found", body)
 
 
@@ -594,6 +609,8 @@ def main():
             for p in k["photos"]:
                 shutil.copy(p, dest / p.name)
 
+    if (CONTENT / "gallery").exists():
+        shutil.copytree(CONTENT / "gallery", OUT / "gallery", dirs_exist_ok=True)
     if (CONTENT / "blog" / "media").exists():
         shutil.copytree(CONTENT / "blog" / "media", OUT / "blog" / "media", dirs_exist_ok=True)
     (OUT / "feed.xml").write_text(build_feed(), encoding="utf-8")
