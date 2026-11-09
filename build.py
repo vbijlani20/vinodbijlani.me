@@ -122,6 +122,8 @@ def load_posts():
     return sorted(posts, key=lambda p: date_key(p.get("date")), reverse=True)
 
 
+import hashlib
+ASSET_V = hashlib.sha1((Path(__file__).parent / "assets" / "site.css").read_bytes() + (Path(__file__).parent / "assets" / "site.js").read_bytes()).hexdigest()[:8]
 KEYNOTES = load_keynotes()
 GALLERY = load_yaml("gallery.yml") if (CONTENT / "gallery.yml").exists() else []
 GALLERY_GROUPS = {}
@@ -169,7 +171,7 @@ def layout(pg, current, title, description, body, image=None):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{pg.rel('assets/site.css')}">
+<link rel="stylesheet" href="{pg.rel('assets/site.css')}?v={ASSET_V}">
 </head>
 <body>
 <nav class="site-nav" aria-label="Main">
@@ -202,7 +204,7 @@ def layout(pg, current, title, description, body, image=None):
     </div>
   </div>
 </footer>
-<script src="{pg.rel('assets/site.js')}" defer></script>
+<script src="{pg.rel('assets/site.js')}?v={ASSET_V}" defer></script>
 </body>
 </html>
 """
@@ -226,7 +228,10 @@ def page_head(num, title, intro, facts, art=""):
   {f'<div class="facts">{f}</div>' if f else ''}
 </div>"""
     if art:
-        return f'<header class="page-head with-art"><div class="wrap head-grid">{text}{art}</div></header>'
+        text = text.replace(f'<div class="facts">{f}</div>', "") if f else text
+        nums = "".join(f'<div class="stat"><b>{e(str(n))}</b><span>{e(label)}</span></div>' for n, label in facts)
+        side = f'<div class="head-side">{art}{f"<div class=\"stats compact head-stats\">{nums}</div>" if nums else ""}</div>'
+        return f'<header class="page-head with-art"><div class="wrap head-grid">{text}{side}</div></header>'
     return f'<header class="page-head"><div class="wrap">{text}</div></header>'
 
 
@@ -655,7 +660,7 @@ def build_blog_index():
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
         + post_visual(pg, p) + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
-                     [(len(POSTS), "posts"), ("RSS", "feed available")], page_art(pg, "blog")) + \
+                     [(len(POSTS), "posts"), (len([q for q in POSTS if q.get("series") == "dc"]), "on data centres and AI factories"), (len(STRANDS), "themes")], page_art(pg, "blog")) + \
         f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
     return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on data centres, AI factories, token economics, sovereign AI and governance.", body)
 
@@ -752,7 +757,7 @@ def build_books():
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
     body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), ("Springer · Elsevier · IGI Global · Nova Science", "")], '<figure class="head-art book-art"><div class="cover" aria-hidden="true"><span>OWN<br>YOUR<br>AI</span><small>The Sovereign Stack Playbook</small></div></figure>') + \
+                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], '<figure class="head-art book-art"><div class="cover" aria-hidden="true"><span>OWN<br>YOUR<br>AI</span><small>The Sovereign Stack Playbook</small></div></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
@@ -761,7 +766,7 @@ def build_papers():
     pg = Page("papers.html")
     rows = "".join(f'<li>{row(p.get("url", ""), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]), e(p["venue"]))}</li>' for p in PAPERS)
     body = page_head("06", "Papers", "Conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
-                     [(len(PAPERS), "papers"), ("Springer · IEEE", "")], page_art(pg, "papers")) + \
+                     [(len(PAPERS), "papers"), (sum(1 for q in PAPERS if "IEEE" in q["venue"]), "IEEE"), (len({str(q["date"])[:4] for q in PAPERS}), "years published")], page_art(pg, "papers")) + \
         f'<main class="inner"><div class="wrap"><ul class="rows">{rows}</ul></div></main>'
     return pg, layout(pg, "papers", "Papers", f"Papers by {PROFILE['name']}.", body)
 
@@ -777,7 +782,7 @@ def build_patents():
             cards.append(f'<article class="patent"><h3>{e(inv["title"])}</h3><div class="count">{n}<small>{"filing" if n == 1 else "filings"}</small></div><div class="filings">{fl}</div></article>')
         parts.append(f'<div class="group-title">{e(g["group"])} <span class="mono">{len(g["inventions"])} inventions</span></div><div class="grid2">{"".join(cards)}</div>')
     body = page_head("07", "Patents", "Inventions in data analytics for smart transportation, retail, interactive media and networking. IBM Master Inventor.",
-                     [(N_INVENTIONS, "inventions"), (N_FILINGS, "filings"), (len(OFFICES), "patent offices"), (" · ".join(OFFICES), "")], f'<figure class="head-art patent-art" aria-hidden="true"><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor</p></figure>') + \
+                     [], f'<figure class="head-art patent-art" aria-hidden="true"><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor · {" · ".join(OFFICES)}</p></figure>') + \
         f'<main class="inner"><div class="wrap">{"".join(parts)}<p class="note">Each filing links to its record on WIPO Patentscope.</p></div></main>'
     return pg, layout(pg, "patents", "Patents", f"Patents by {PROFILE['name']}, IBM Master Inventor.", body)
 
