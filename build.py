@@ -99,6 +99,9 @@ def load_keynotes():
         meta, body = read_md(d)
         folder = d.parent
         photos = sorted(p for p in (folder / "photos").glob("*") if p.suffix.lower() in IMG_EXT) if (folder / "photos").exists() else []
+        order = [str(x) for x in (meta.get("order") or [])]
+        if order:  # photos listed in 'order' come first, in that order
+            photos.sort(key=lambda ph: order.index(ph.name) if ph.name in order else len(order))
         cover = [ph for ph in photos if ph.name == meta.get("cover")]
         photos = cover + [ph for ph in photos if ph not in cover]  # the cover is shown first everywhere
         meta.update(slug=folder.name, body=body.strip(), photos=photos, folder=folder)

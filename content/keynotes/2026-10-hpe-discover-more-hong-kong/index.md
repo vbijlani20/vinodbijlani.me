@@ -1,13 +1,13 @@
 ---
 title: Leading through the AI era · From AI factory to token economy
 event: HPE Discover More Hong Kong 2026
-date: 2026-10
+date: '2026-10-16'
 city: Hong Kong
 role: Moderator and panellist
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-hpediscovermore-tokenfactory-activity-7517895386993168384-2Zm5
 ---
 
-Two panels at HPE Discover More Hong Kong.
+Two sessions at HPE Discover More Hong Kong, Rosewood Hong Kong, on 16 October 2026.
 
 **Leading Through the AI Era: Navigating Transformation in an Age of Intelligence.** I moderated a conversation with Flora Ng, CIO and Chief Librarian at HKU, and Patrick Khong, Chief Data Officer at the Hong Kong Jockey Club. Our three takeaways:
 

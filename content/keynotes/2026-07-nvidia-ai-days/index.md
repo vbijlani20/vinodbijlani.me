@@ -4,6 +4,7 @@ event: NVIDIA AI Days Sydney and Melbourne
 date: 2026-07
 city: Sydney · Melbourne
 role: Speaker
+linkedin: https://www.linkedin.com/posts/vinodbijlani_nvidia-hpe-activity-7488920235245404160-2YA9
 ---
 
 A year ago the question was "Which LLM should we use?". Now it is "How do we securely operationalise AI and scale it across the enterprise?"

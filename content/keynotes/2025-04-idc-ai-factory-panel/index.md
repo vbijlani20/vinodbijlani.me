@@ -5,6 +5,8 @@ date: 2025-04
 city: ''
 role: Panellist
 links:
+- label: Webinar recording
+  url: https://katonic.ai/blog/idc-webinar-recording
 - label: Watch on YouTube
   url: https://www.youtube.com/watch?v=8yhLOfT13Xk
 ---

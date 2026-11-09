@@ -4,6 +4,9 @@ event: Webinar with HPE, SUSE and Katonic AI
 date: 2026-07
 city: Online
 role: Speaker
+links:
+- label: Webinar page
+  url: https://www.katonic.ai/sovereign-ai-factory
 ---
 
 Building an AI factory is not just about deploying GPUs or choosing the right LLM. It is about an enterprise AI platform that is open, secure, governed and ready for AI agents.
