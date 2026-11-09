@@ -1,24 +1,37 @@
+# Archive photos without a specific event. 'group' sets the section on the Thought Leadership page.
 - file: home-22.webp
+  group: Technical presentations
   caption: A technical session on moving AI from concept to production.
 - file: home-17.webp
+  group: Technical presentations
   caption: Presenting a layered architecture on stage.
 - file: home-19.webp
+  group: Technical presentations
   caption: Presenting on customer control and flexibility with Red Hat and HPE.
 - file: home-24.webp
+  group: Technical presentations
   caption: Presenting the evolution of secure and controlled AI.
 - file: home-16.webp
+  group: Technical presentations
   caption: Discussing AI architecture with a conference audience.
 - file: home-21.webp
+  group: Technical presentations
   caption: Presenting to a conference audience.
 - file: home-23.webp
+  group: Technical presentations
   caption: Taking the microphone for a technical presentation.
 - file: home-20.webp
+  group: Technical presentations
   caption: The audience view of the Red Hat and HPE presentation.
 - file: home-25.webp
+  group: Technical presentations
   caption: Participants at an AI presentation.
 - file: home-11.webp
+  group: Conference photographs
   caption: Group photograph from Vinod’s conference archive.
 - file: home-26.webp
+  group: Conference photographs
   caption: Vinod beside an HPE exhibit.
 - file: home-18.webp
+  group: Conference photographs
   caption: Vinod at a conference.

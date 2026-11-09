@@ -379,8 +379,92 @@ def build_experience():
     return pg, layout(pg, "experience", "Experience", f"Career and projects of {PROFILE['name']}: HPE, IBM, Kroger, Northwestern Mutual, Citibank and Kvaerner.", body)
 
 
+def talk_kinds(k):
+    r = (k.get("role") or "").lower()
+    kinds = [x for x, words in (("keynote", ("keynote",)), ("panel", ("panel",)), ("webinar", ("webinar", "online"))) if any(w in r for w in words)]
+    if "webinar" in (k.get("event") or "").lower() or (k.get("city") or "") == "Online":
+        kinds.append("webinar")
+    return sorted(set(kinds)) or ["talk"]
+
+
+def first_para(text, limit=260):
+    para = re.sub(r"\s+", " ", (text or "").strip().split("\n\n")[0])
+    para = re.sub(r"[*_`#>\[\]]|\(https?://[^)]*\)", "", para)
+    return para if len(para) <= limit else para[:limit].rsplit(" ", 1)[0] + "…"
+
+
+def photo_figure(pg, src, caption, event, credit=None, credit_url=None):
+    cred = ""
+    if credit:
+        cred = f'<a class="credit" href="{e(credit_url)}">{e(credit)} ↗</a>' if credit_url else f'<span class="credit">{e(credit)}</span>'
+    return (f'<figure class="ph"><a href="{pg.rel(src)}" data-lightbox aria-label="Enlarge: {e(caption)}">'
+            f'<img src="{pg.rel(src)}" alt="{e(caption)}" loading="lazy"></a>'
+            f'<figcaption><strong>{e(event)}</strong><span>{e(caption)}</span>{cred}</figcaption></figure>')
+
+
 def build_speaking():
     pg = Page("speaking/index.html")
+    years = sorted({str(date_key(k.get("date"))[0]) for k in KEYNOTES})
+    cities = []
+    for k in KEYNOTES:
+        c = (k.get("city") or "").replace("ICC ", "")
+        if c and c != "Online" and c not in cities:
+            cities.append(c)
+    n_photos = sum(len(k["photos"]) for k in KEYNOTES) + len(GALLERY)
+    counts = {}
+    for k in KEYNOTES:
+        for kind in talk_kinds(k):
+            counts[kind] = counts.get(kind, 0) + 1
+    labels = [("all", "All", len(KEYNOTES)), ("keynote", "Keynotes", counts.get("keynote", 0)), ("panel", "Panels", counts.get("panel", 0)),
+              ("webinar", "Webinars", counts.get("webinar", 0)), ("talk", "Other talks", counts.get("talk", 0))]
+    chips = "".join(f'<button type="button" data-kind="{k}" aria-pressed="{"true" if k == "all" else "false"}">{e(l)}<span>{n}</span></button>' for k, l, n in labels if n)
+    finder = f"""<div class="finder" role="search">
+  <label for="tl-q">Search talks, events, cities and topics</label>
+  <input id="tl-q" type="search" placeholder="Try: sovereign, Sydney, panel, 2021" autocomplete="off" aria-controls="tl-results">
+  <div class="filters" role="group" aria-label="Filter by format">{chips}</div>
+  <p id="tl-status" class="mono" role="status"></p>
+</div>"""
+
+    # Events in pictures: every talk with photos, with its details beside the photos
+    events = []
+    for k in KEYNOTES:
+        if not k["photos"]:
+            continue
+        caps = k.get("captions") or {}
+        cred = k.get("photo_credit") or ({"label": "Vinod Bijlani on LinkedIn", "url": k["linkedin"]} if k.get("linkedin") else {})
+        page = "speaking/" + k["slug"] + "/index.html"
+        figs = "".join(photo_figure(pg, keynote_photo_rel(k, ph), caps.get(ph.name) or k["event"], k["event"], cred.get("label"), cred.get("url")) for ph in k["photos"])
+        meta = " · ".join(x for x in (date_display(k.get("date")), k.get("city", "").replace("ICC ", ""), k.get("role", "")) if x)
+        acts = [f'<a class="btn primary" href="{pg.rel(page)}">Event details →</a>']
+        if k.get("linkedin"):
+            acts.append(f'<a class="btn" href="{e(k["linkedin"])}">LinkedIn post ↗</a>')
+        for l in (k.get("links") or [])[:2]:
+            acts.append(f'<a class="btn" href="{e(l["url"])}">{e(l["label"])} ↗</a>')
+        related = [p for p in POSTS if k["slug"] in (p.get("keynotes") or [])]
+        rel = "".join(f'<li><a href="{pg.rel("blog/" + p["slug"] + "/index.html")}">{e(p["title"])}</a></li>' for p in related)
+        events.append(f"""<article class="event" data-record data-kind="{' '.join(talk_kinds(k))}">
+  <div class="event-info">
+    <span class="mono">{e(meta)}</span>
+    <h3><a href="{pg.rel(page)}">{e(k['title'])}</a></h3>
+    <p class="event-name">{e(k['event'])}</p>
+    <p>{e(first_para(k['body']))}</p>
+    {f'<div class="event-rel"><span class="mono">On the blog</span><ul>{rel}</ul></div>' if rel else ''}
+    <div class="event-acts">{"".join(acts)}</div>
+    <span class="mono count">{len(k['photos'])} photo{'s' if len(k['photos']) != 1 else ''}</span>
+  </div>
+  <div class="photo-grid n{len(k['photos']) if len(k['photos']) <= 4 else 'many'}">{figs}</div>
+</article>""")
+
+    # Archive photos grouped by theme
+    groups = {}
+    for g in GALLERY:
+        groups.setdefault(g.get("group") or "On stage", []).append(g)
+    archive = "".join(
+        f'<section class="archive" data-record data-kind="talk keynote panel webinar"><h3 class="sub-h">{e(name)}<span class="mono"> · {len(items)} photos</span></h3><div class="photo-grid wide">'
+        + "".join(photo_figure(pg, "gallery/" + g["file"], g.get("caption", ""), name) for g in items) + "</div></section>"
+        for name, items in groups.items())
+
+    # Full archive of talks by year
     by_year = {}
     for k in KEYNOTES:
         by_year.setdefault(str(date_key(k.get("date"))[0]), []).append(k)
@@ -389,28 +473,31 @@ def build_speaking():
         lis = []
         for k in talks:
             thumb = f'<img class="thumb" src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else ""
-            badges = "".join([f'<span class="chip hot">{len(k["photos"])} photo{"s" if len(k["photos"]) > 1 else ""}</span>' if k["photos"] else "",
-                              '<span class="chip">LinkedIn</span>' if k.get("linkedin") else ""])
-            lis.append(f"""<li><a class="talk-row" href="{pg.rel('speaking/' + k['slug'] + '/index.html')}">
+            kinds = talk_kinds(k)
+            badges = "".join([f'<span class="chip">{e(x.capitalize())}</span>' for x in kinds if x != "talk"]
+                             + [f'<span class="chip hot">{len(k["photos"])} photo{"s" if len(k["photos"]) > 1 else ""}</span>' if k["photos"] else "",
+                                '<span class="chip">LinkedIn</span>' if k.get("linkedin") else ""])
+            summ = first_para(k["body"], 180)
+            lis.append(f"""<li data-record data-kind="{' '.join(kinds)}"><a class="talk-row" href="{pg.rel('speaking/' + k['slug'] + '/index.html')}">
   <div><div class="tl-head"><h3>{e(k['title'])}</h3></div>
   <div class="tl-meta">{e(date_display(k.get('date')))} · {e(k.get('role', ''))}{(' · ' + e(k['city'])) if k.get('city') else ''}</div>
-  <p class="tl-body">{e(k['event'])}</p><div class="chips">{badges}</div></div>{thumb}</a></li>""")
-        parts.append(f'<div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol>')
-    years = sorted(by_year)
-    cities = []
-    for k in KEYNOTES:
-        c = (k.get("city") or "").replace("ICC ", "")
-        if c and c != "Online" and c not in cities:
-            cities.append(c)
-    gal = ""
-    if GALLERY:
-        gal = ('<div class="sec-head" style="margin-top:8px"><span class="stop">→</span><h2>On stage</h2></div><div class="gallery-wall">'
-               + "".join(f'<a class="g-item" href="{pg.rel("gallery/" + g["file"])}" data-lightbox><img src="{pg.rel("gallery/" + g["file"])}" alt="{e(g.get("caption", ""))}" loading="lazy"></a>' for g in GALLERY)
-               + '</div><div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Keynotes, panels and talks</h2></div>')
-    body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities.",
-                     [(len(KEYNOTES), "talks"), (f"{years[0]}–{years[-1]}", ""), (len(cities), "cities")]) + \
-        f'<main class="inner"><div class="wrap">{gal}{"".join(parts)}</div></main>'
-    return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI.", body)
+  <p class="tl-body">{e(k['event'])}</p>{f'<p class="tl-sum">{e(summ)}</p>' if summ else ''}<div class="chips">{badges}</div></div>{thumb}</a></li>""")
+        parts.append(f'<div class="year-group" data-group><div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol></div>')
+
+    jump = '<nav class="jump mono" aria-label="On this page"><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a><a href="#all-talks">All talks</a></nav>'
+    body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
+                     [(len(KEYNOTES), "talks"), (f"{years[0]}–{years[-1]}", ""), (len(cities), "cities"), (n_photos, "photos")]) + f"""
+<main class="inner"><div class="wrap">{jump}{finder}
+<div id="tl-results">
+<div class="sec-head" id="events"><span class="stop">→</span><h2>Events in pictures</h2></div>
+<div class="events" data-group>{"".join(events)}</div>
+<div class="sec-head" id="archive" style="margin-top:64px"><span class="stop">→</span><h2>Photo archive</h2></div>
+<div data-group>{archive}</div>
+<div class="sec-head" id="all-talks" style="margin-top:64px"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
+{"".join(parts)}
+<p class="empty" hidden>No talks match. Try a different word or clear the search.</p>
+</div></div></main>"""
+    return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes, panels and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI, with photos and event details.", body)
 
 
 def build_keynote(k):
