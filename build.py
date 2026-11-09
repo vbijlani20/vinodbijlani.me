@@ -311,7 +311,7 @@ def build_home():
         ("speaking", len(KEYNOTES), "Thought leadership", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US.", "talks"),
         ("blog", len(POSTS), "Blog", "Field notes on AI factories, token economics and governance, with infographics.", "posts"),
         ("publications", len(ARTICLES), "Publications", f"Including {N_FORBES} Forbes Technology Council articles.", "publications"),
-        ("books", len(BOOKS), "Books", "Own Your AI, plus chapters with IGI Global and Nova Science.", "titles"),
+        ("books", len(BOOKS), "Books", "Own Your AI, plus chapters with Springer, Elsevier, IGI Global and Nova Science.", "titles"),
         ("patents", N_FILINGS, "Patents", f"{N_INVENTIONS} inventions filed in {len(OFFICES)} patent offices.", "filings"),
     ]
     cards = "".join(f'<a href="{pg.rel(URLS[s])}"><h3>{e(t)} <span aria-hidden="true">→</span></h3><p>{e(d)}</p><span class="mono">{n} {e(u)}</span></a>' for s, n, t, d, u in explore)
@@ -733,8 +733,8 @@ def build_books():
   {f'<div class="cta" style="margin-top:auto">{links}</div>' if links else ''}
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
-    body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on sustainable buildings, resilient smart cities and health.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), ("IGI Global · Nova Science", "")]) + \
+    body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
+                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), ("Springer · Elsevier · IGI Global · Nova Science", "")]) + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 

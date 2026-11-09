@@ -11,6 +11,35 @@
   featured: true
 
 - kind: Book chapter
+  title: "Smart Green Buildings for Advancing Corporate Social Responsibility Goals"
+  book: Global Corporate Governance (pp. 43–72), CSR, Sustainability, Ethics & Governance series
+  publisher: Springer
+  year: 2025
+  description: How smart, green buildings help organisations meet their CSR goals, using smart technology, sustainable practices and behavioural strategies that engage employees, in both existing and new buildings.
+  links:
+    - {label: Springer, url: "https://doi.org/10.1007/978-3-031-86330-1_4"}
+
+- kind: Book chapter
+  title: "Smart buildings"
+  book: "The Sustainability Handbook, Volume 3: The Body of Knowledge around Disruptive Sustainability Innovation (Chapter 14)"
+  authors: Vinod Anand Bijlani and Mark von Rosing
+  publisher: Elsevier
+  year: 2025
+  description: Smart buildings as a lever for disruptive sustainability innovation, in Elsevier's handbook on integrating sustainability into how organisations operate.
+  links:
+    - {label: DOI, url: "https://doi.org/10.1016/b978-0-443-33756-7.00036-0"}
+
+- kind: Book chapter
+  title: "Transformative Innovation in Course Design for STEM-Based E-Learning"
+  book: Advancing STEM Education and Innovation in a Time of Distance Learning (Chapter 14)
+  publisher: IGI Global
+  year: 2023
+  description: Lessons from the pandemic shift to remote learning, and a set of practical changes to deliver STEM education remotely, effectively and at scale while improving learning outcomes.
+  links:
+    - {label: IGI Global, url: "https://www.irma-international.org/chapter/transformative-innovation-in-course-design-for-stem-based-e-learning/313737/"}
+    - {label: DOI, url: "https://doi.org/10.4018/978-1-6684-5053-6.ch014"}
+
+- kind: Book chapter
   title: "The Triple Bottom Line Approach to Sustainable Buildings"
   book: Sustainable and Healthy Building Environments (Chapter 14)
   publisher: Nova Science Publishers
@@ -26,7 +55,8 @@
   year: 2022
   description: The data and technology blend that future smart city buildings need to be inclusive, resilient and sustainable.
   links:
-    - {label: IGI Global, url: "https://doi.org/10.4018/978-1-6684-4030-8"}
+    - {label: IGI Global, url: "https://www.igi-global.com/chapter/smart-city-buildings-for-a-resilient-sustainable-future/303529"}
+    - {label: DOI, url: "https://doi.org/10.4018/978-1-6684-4030-8.ch010"}
 
 - kind: Book chapter
   title: "Sustainability and Health in a Smart City: Health at the Heart of a Smart City"
@@ -36,10 +66,4 @@
   description: Why future-proofed, data-driven healthcare belongs at the centre of sustainable smart cities, using AI, IoT and blockchain for predictive and preventive health.
   links:
     - {label: IGI Global, url: "https://www.igi-global.com/chapter/sustainability-and-health-in-a-smart-city/303530"}
-
-- kind: Book chapter
-  title: "Transformative Innovation in Course Design for STEM-Based E-Learning"
-  publisher: ""
-  year: ""
-  description: ""
-  links: []
+    - {label: DOI, url: "https://doi.org/10.4018/978-1-6684-4030-8.ch011"}
