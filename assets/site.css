@@ -496,3 +496,41 @@ footer a:hover{color:var(--ink)}
 .stats.compact .stat span{font-size:12.5px;line-height:1.35;margin-top:6px}
 @media (max-width:700px){.stats.compact{grid-template-columns:repeat(3,1fr)}.stats.compact .stat:nth-child(3){padding-left:12px;border-left:1px solid var(--line)}.stats.compact .stat:nth-child(4){padding-left:0;border-left:0}.stats.compact .stat:nth-child(n+4){border-top:1px solid var(--line)}}
 .ph img,.ev-cover img,.talk-row .thumb{object-position:50% 22%}
+
+/* v8: data centre and AI factory series */
+.dc-hub{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(22px,3vw,40px);margin-bottom:8px}
+.dc-intro{max-width:72ch;margin-bottom:28px}
+.dc-intro > .mono{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.dc-intro h2{font-family:var(--display);font-size:clamp(28px,3.6vw,44px);letter-spacing:-.02em;line-height:1.08;margin:8px 0 12px}
+.dc-intro p{font-size:18px;line-height:1.55;margin:0}
+.dc-talks{display:flex;flex-direction:column;gap:6px;margin-top:18px}
+.dc-talks > .mono{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dc-talks a{color:var(--ink);text-decoration:none;font-weight:600;border-left:3px solid var(--accent);padding-left:10px}
+.dc-talks a .mono{font-weight:400;color:var(--muted);font-size:12px}
+.dc-talks a:hover{color:var(--accent)}
+.strand{margin-top:34px}
+.strand-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;border-top:1px solid var(--line);padding-top:18px;margin-bottom:16px}
+.strand-head h3{font-family:var(--display);font-size:22px;margin:0}
+.strand-head p{margin:0;color:var(--muted);font-size:15px}
+.dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.dc-card{display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);transition:transform .2s,border-color .2s}
+.dc-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.dc-card .pv{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.dc-card .body{padding:14px 16px 16px}
+.dc-card .body .mono{font-size:11px;color:var(--muted)}
+.dc-card h4{font-family:var(--display);font-size:17px;line-height:1.25;margin:6px 0}
+.dc-card p{font-size:14px;line-height:1.45;color:var(--muted);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pv-tile{background:var(--ink);color:var(--bg);display:flex;flex-direction:column;justify-content:center;gap:8px;padding:16px 18px;box-sizing:border-box;position:relative;overflow:hidden}
+.pv-tile .mono{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.pv-tile b{font-family:var(--display);font-size:clamp(24px,2.4vw,34px);line-height:1.05;color:var(--accent);letter-spacing:-.02em}
+.pv-line{display:block;height:4px;border-radius:2px;background:rgba(242,179,61,.35);position:relative;margin-top:4px}
+.pv-line::after{content:"";position:absolute;right:0;top:-5px;width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid var(--accent);box-sizing:border-box}
+.post-row .pv{width:200px;aspect-ratio:16/10;border-radius:10px;object-fit:cover;border:1px solid var(--line)}
+.post-row .pv-tile{padding:12px 14px}
+.post-row .pv-tile b{font-size:22px}
+@media (max-width:640px){.post-row .pv{width:100%}}
+.series-link{display:inline-block;margin-top:14px;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)}
+.series-link:hover{color:var(--accent)}
+.dc-card .pv-tile,.post-row .pv-tile{display:flex}
+.pv-tile b.sm{font-size:clamp(19px,1.7vw,24px);color:var(--bg)}
+.talk-card .pv-tile{display:flex;width:100%;aspect-ratio:16/10}

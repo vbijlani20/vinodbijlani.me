@@ -4,6 +4,8 @@ date: 2026-10-26
 summary: From a few kilowatts per rack to around 120 kW. A similar patch of floor, a very different demand on the building.
 image: media/evolution-of-data-center.gif
 image_alt: "From data centres to AI factories, 2000 to 2026"
+series: dc
+strand: factory
 tags: [AI factories, Data centres, Sustainability]
 infographic:
   type: steps

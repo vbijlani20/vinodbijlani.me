@@ -93,3 +93,8 @@ open _site/index.html
 - Choose the cover in the talk's `index.md` front matter with `cover: 03.webp` (otherwise the first photo is used). Captions go under `captions:` and an optional credit under `photo_credit:` (`label`, `url`).
 - Photos not tied to one event live in `content/gallery.yml`, grouped by `group:`; mark the group's cover with `cover: true`.
 - The home page photo is `stage_photo` in `content/profile.yml`.
+
+## Data centre and AI factory series (blog)
+
+- Add `series: dc` to a post's front matter to include it in the "Data centre and AI factory leadership" section at the top of the blog, and `strand: buildout | factory | economics` to choose its group.
+- Posts without an infographic image get a tile built from the `infographic` title and headline `stat`.

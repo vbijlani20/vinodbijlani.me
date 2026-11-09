@@ -4,6 +4,8 @@ date: 2026-10-01
 summary: A GPU is a capital decision. Power, cooling, networking, utilisation and staging compound over the life of the AI factory.
 image: media/economics-of-ai-factory.gif
 image_alt: "The economics of an AI factory: the costs below the waterline"
+series: dc
+strand: economics
 tags: [AI factories, AI economics, Data centres]
 infographic:
   type: stats

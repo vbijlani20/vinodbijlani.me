@@ -292,7 +292,7 @@ def build_home():
 
     posts = "".join(
         f'<a class="talk-card" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">'
-        + (f'<img class="ig-thumb" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else '<div class="ph" aria-hidden="true"></div>')
+        + (f'<img class="ig-thumb" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else post_visual(pg, p))
         + f'<div class="body"><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p></div></a>'
         for p in POSTS[:3])
     forbes = [a for a in ARTICLES if a.get("type") == "article"][:4]
@@ -581,18 +581,60 @@ def build_keynote(k):
     return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img)
 
 
+SERIES_NAME = "Data centre and AI factory leadership"
+STRANDS = [
+    ("buildout", "The global buildout", "Where data centre capacity sits today, where it is heading by 2030, and how much of the pipeline will actually be delivered."),
+    ("factory", "Inside the AI factory", "From data halls to rack-scale AI: power, cooling, orchestration and the move to the edge."),
+    ("economics", "The economics of AI factories", "What a token, a FLOP and a megawatt really cost, and where each workload should run."),
+]
+
+
+def post_visual(pg, p):
+    """Infographic image if the post has one, otherwise a tile built from its infographic headline."""
+    if p.get("image"):
+        return f'<img class="pv" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">'
+    ig = p.get("infographic") or {}
+    stat = (ig.get("stat") or {}).get("value")
+    if stat:
+        inner = f'<span class="mono">{e(ig.get("title", "Infographic"))}</span><b>{e(str(stat))}</b>'
+    else:
+        inner = f'<span class="mono">Infographic</span><b class="sm">{e(ig.get("title", ""))}</b>'
+    return f'<div class="pv pv-tile" aria-hidden="true">{inner}<span class="pv-line"></span></div>'
+
+
 def build_blog_index():
     pg = Page("blog/index.html")
+    series = [p for p in POSTS if p.get("series") == "dc"]
+    strands = []
+    for key, name, blurb in STRANDS:
+        ps = sorted([p for p in series if p.get("strand") == key], key=lambda p: date_key(p["date"]))
+        if not ps:
+            continue
+        cards = "".join(
+            f'<a class="dc-card" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">{post_visual(pg, p)}'
+            f'<div class="body"><span class="mono">{e(date_display(p["date"]))}</span><h4>{e(p["title"])}</h4><p>{e(p.get("summary", ""))}</p></div></a>'
+            for p in ps)
+        strands.append(f'<div class="strand"><div class="strand-head"><h3>{e(name)}</h3><p>{e(blurb)}</p></div><div class="dc-grid">{cards}</div></div>')
+    talks = [k for k in KEYNOTES if any(k["slug"] in (p.get("keynotes") or []) for p in series)]
+    talk_links = "".join(f'<a href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{e(k["title"])} <span class="mono">· {e(k["event"])}</span></a>' for k in talks)
+    hub = f"""<section class="dc-hub" id="data-centres">
+  <div class="dc-intro">
+    <span class="mono">Series · {len(series)} posts</span>
+    <h2>{e(SERIES_NAME)}</h2>
+    <p>Notes on the shift from data centres to AI factories: the global capacity buildout, what changes inside the facility, and the economics that decide whether megawatts become useful intelligence.</p>
+    {f'<div class="dc-talks"><span class="mono">From the stage</span>{talk_links}</div>' if talk_links else ''}
+  </div>
+  {"".join(strands)}
+</section>"""
     rows = "".join(
         f'<li><a class="post-row" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">'
         + f'<div><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p>'
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
-        + (f'<img src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else '')
-        + '</a></li>' for p in POSTS)
+        + post_visual(pg, p) + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
                      [(len(POSTS), "posts"), ("RSS", "feed available")]) + \
-        f'<main class="inner"><div class="wrap"><ul class="post-list">{rows}</ul></div></main>'
-    return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on AI factories, token economics, sovereign AI and governance.", body)
+        f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:72px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
+    return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on data centres, AI factories, token economics, sovereign AI and governance.", body)
 
 
 def build_post(p):
@@ -620,6 +662,7 @@ def build_post(p):
   <h1 class="h1-sm">{e(p['title'])}</h1>
   {f'<p class="intro">{e(p["summary"])}</p>' if p.get('summary') else ''}
   <div class="chips" style="margin-top:16px">{tags}</div>
+  {f'<a class="series-link" href="{pg.rel(URLS["blog"])}#data-centres">Part of the series: {e(SERIES_NAME)} →</a>' if p.get("series") == "dc" else ''}
 </div></header>
 <main class="inner"><div class="wrap"><div class="post-grid">
   <article class="prose">{md(p['body'])}{rel}</article>

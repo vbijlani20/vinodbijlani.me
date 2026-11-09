@@ -4,6 +4,8 @@ date: 2026-09-25
 summary: At 1 GW of IT load, the gap between an average and a highly efficient PUE is around 3,940 GWh and $315M of energy a year.
 image: media/pue-score.gif
 image_alt: "What is the most critical parameter for GW-scale data centres? PUE explained, with the world’s best PUE scores"
+series: dc
+strand: factory
 tags: [Sustainability, AI factories, Data centres]
 infographic:
   type: bars
