@@ -171,7 +171,7 @@ def layout(pg, current, title, description, body, image=None):
 <body>
 <nav class="site-nav" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="{pg.rel('index.html')}">{e(PROFILE['name'])}<span>.</span></a>
+    <a class="brand" href="{pg.rel('index.html')}">{e(PROFILE['name'])}<span class="dash" aria-hidden="true"></span></a>
     <ul>{nav}</ul>
   </div>
 </nav>
@@ -271,12 +271,15 @@ def build_home():
     route = "".join(f'<li><div class="yr">{e(str(r["year"]))}</div><div class="city">{e(r["city"])}</div><div class="what">{e(r["what"])}</div></li>' for r in PROFILE["route"])
     first, last = PROFILE["name"].split(" ", 1)
 
-    strip_imgs = [(pg.rel("gallery/" + g["file"]), g.get("caption", "")) for g in GALLERY[:6]]
-    stage_strip = ""
-    if strip_imgs:
-        stage_strip = '<div class="stage-strip">' + "".join(f'<a href="{src}" data-lightbox><img src="{src}" alt="{e(c)}" loading="lazy"></a>' for src, c in strip_imgs) + '</div>'
+    with_photos = [k for k in KEYNOTES if k["photos"]]
+    featured = with_photos[:3] or KEYNOTES[:3]
+    # Photo strip: one photo each from six other presentations, each linking to its event page
+    strip = []
+    for k in with_photos[3:9]:
+        cap = (k.get("captions") or {}).get(k["photos"][0].name) or k["event"]
+        strip.append(f'<a href="{pg.rel("speaking/" + k["slug"] + "/index.html")}" title="{e(k["event"])}"><img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="{e(cap)}" loading="lazy"><span>{e(k["event"])}</span></a>')
+    stage_strip = f'<div class="stage-strip">{"".join(strip)}</div>' if strip else ""
     talks = []
-    featured = [k for k in KEYNOTES if k["photos"]][:3] or KEYNOTES[:3]
     for k in featured:
         img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
         talks.append(f'<a class="talk-card" href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{img}<div class="body"><span class="mono">{e(date_display(k.get("date")))} · {e(k.get("role", ""))}</span><h3>{e(k["title"])}</h3><p>{e(k["event"])}</p></div></a>')
@@ -334,7 +337,7 @@ def build_home():
 </div></header>
 <main>
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Thought leadership</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2>Thought leadership</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All keynotes, panels and talks →</a></div></div>
   <div class="talk-grid">{''.join(talks)}</div>
   {stage_strip}
 </div></section>
@@ -508,8 +511,14 @@ def build_speaking():
     for y, talks in by_year.items():
         lis = []
         for k in talks:
-            thumb = f'<img class="thumb" src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else ""
             kinds = talk_kinds(k)
+            if k["photos"]:
+                thumb = f'<img class="thumb" src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">'
+            else:  # designed tile until a photo is added to the talk's folder
+                place = (k.get("city") or "").replace("ICC ", "") or ("Online" if "webinar" in kinds else "")
+                fmt = {"keynote": "Keynote", "panel": "Panel", "webinar": "Webinar"}.get(next((x for x in kinds if x != "talk"), ""), "Talk")
+                thumb = (f'<div class="thumb tile" aria-hidden="true"><span class="t-fmt">{e(fmt)}</span>'
+                         f'<b>{e(str(date_key(k.get("date"))[0]))}</b><span class="t-line"></span><span class="t-place">{e(place)}</span></div>')
             badges = "".join([f'<span class="chip">{e(x.capitalize())}</span>' for x in kinds if x != "talk"]
                              + [f'<span class="chip hot">{len(k["photos"])} photo{"s" if len(k["photos"]) > 1 else ""}</span>' if k["photos"] else "",
                                 '<span class="chip">LinkedIn</span>' if k.get("linkedin") else ""])
@@ -520,17 +529,17 @@ def build_speaking():
   <p class="tl-body">{e(k['event'])}</p>{f'<p class="tl-sum">{e(summ)}</p>' if summ else ''}<div class="chips">{badges}</div></div>{thumb}</a></li>""")
         parts.append(f'<div class="year-group" data-group><div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol></div>')
 
-    jump = '<nav class="jump mono" aria-label="On this page"><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a><a href="#all-talks">All talks</a></nav>'
+    jump = '<nav class="jump mono" aria-label="On this page"><a href="#all-talks">All talks</a><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a></nav>'
     body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
                      [(len(KEYNOTES), "talks"), (f"{years[0]}–{years[-1]}", ""), (len(cities), "cities"), (n_photos, "photos")]) + f"""
 <main class="inner"><div class="wrap">{jump}{finder}
 <div id="tl-results">
-<div class="sec-head" id="events"><span class="stop">→</span><h2>Events in pictures</h2></div>
+<div class="sec-head" id="all-talks"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
+{"".join(parts)}
+<div class="sec-head" id="events" style="margin-top:64px"><span class="stop">→</span><h2>Events in pictures</h2></div>
 <div class="ev-grid" data-group>{"".join(events)}</div>
 <div class="sec-head" id="archive" style="margin-top:64px"><span class="stop">→</span><h2>Photo archive</h2></div>
 <div class="ev-grid" data-group>{"".join(archive)}</div>
-<div class="sec-head" id="all-talks" style="margin-top:64px"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
-{"".join(parts)}
 <p class="empty" hidden>No talks match. Try a different word or clear the search.</p>
 </div></div></main>"""
     return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes, panels and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI, with photos and event details.", body)
@@ -626,10 +635,32 @@ def build_publications():
             f'<span class="mono">{e(a["outlet"])} · {e(date_display(a["date"]))}</span><span class="chips"><span class="chip{" hot" if a.get("type") == "article" and a["outlet"].startswith("Forbes") else ""}">{label.get(a.get("type"), "Article")}</span></span>',
             e(a["title"]), e(a.get("note", ""))) + "</li>" for a in ARTICLES)
     outlets = len({a["outlet"] for a in ARTICLES})
-    body = page_head("04", "Publications", "Articles and expert panels for the Forbes Technology Council, CDOTrends, the World Economic Forum, The Business Times and more.",
+    # Spotlight: World Economic Forum first, then the Forbes Technology Council
+    wef = [a for a in ARTICLES if a["outlet"] == "World Economic Forum"]
+    wef_html = "".join(f"""<article class="spot spot-wef">
+  <div class="spot-label mono">World Economic Forum · Agenda contributor · {e(date_display(a['date']))}</div>
+  <h3><a href="{e(a['url'])}">{e(a['title'])}</a></h3>
+  <p>{e(a.get('summary') or '')}</p>
+  <a class="btn primary" href="{e(a['url'])}">Read on the World Economic Forum ↗</a>
+</article>""" for a in wef)
+    forbes_all = [a for a in ARTICLES if a["outlet"] == "Forbes"]
+    forbes_articles = [a for a in forbes_all if a.get("type") == "article"]
+    n_panels = len(forbes_all) - len(forbes_articles)
+    latest = "".join(f'<li><a href="{e(a["url"])}"><span class="mono">{e(date_display(a["date"]))} · {e(a["topic"])}</span>{e(a["title"])}</a></li>' for a in forbes_articles[:5])
+    forbes_html = f"""<article class="spot spot-forbes">
+  <div class="spot-head">
+    <div><div class="spot-label mono">Forbes Technology Council · Member</div>
+    <h3>{len(forbes_articles)} articles and {n_panels} expert panels</h3>
+    <p>Columns on sovereign AI, AI factories, agentic AI and the economics of AI infrastructure, written for technology executives.</p>
+    <a class="btn" href="{e(PROFILE['links']['forbes'])}">Forbes profile ↗</a></div>
+  </div>
+  <div class="spot-latest"><span class="mono">Latest in Forbes</span><ul>{latest}</ul></div>
+</article>"""
+    spotlight = f'<div class="sec-head"><span class="stop">→</span><h2>Spotlight</h2></div><div class="spots">{wef_html}{forbes_html}</div>'
+    body = page_head("04", "Publications", "Articles and expert panels for the World Economic Forum, the Forbes Technology Council, CDOTrends, The Business Times and more.",
                      [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles"), (outlets, "outlets")]) + \
-        f'<main class="inner"><div class="wrap"><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
-    return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} in Forbes, CDOTrends, the World Economic Forum and more.", body)
+        f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
+    return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} for the World Economic Forum, Forbes, CDOTrends and more.", body)
 
 
 def build_books():
