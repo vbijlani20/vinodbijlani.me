@@ -4,6 +4,7 @@ event: AI & Data Governance Summit 2026
 date: '2026-08-20'
 city: Melbourne
 role: Panellist
+cover: 01.webp
 captions:
   01.webp: AI security panel on governing agents and MCPs, 20 August 2026.
   02.webp: Vinod at the Melbourne summit on 20 August 2026.

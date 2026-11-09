@@ -4,6 +4,7 @@ event: SUSE Summit Sydney 2026
 date: 2026-08
 city: Sydney
 role: Panellist
+cover: 03.webp
 linkedin: https://www.linkedin.com/posts/vinodbijlani_suse-idc-iag-activity-7495082652945772544-qpf9
 captions:
   01.webp: Vinod in conversation during the SUSE customer panel.

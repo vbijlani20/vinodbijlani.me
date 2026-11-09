@@ -4,6 +4,7 @@ event: w.media Sydney Cloud & Datacenter Convention 2026
 date: '2026-09-17'
 city: ICC Sydney
 role: Keynote and panellist
+cover: 01.webp
 photo_credit:
   label: W.Media
   url: https://old.clouddatacenter.events/events/sydney-cdc-2026/

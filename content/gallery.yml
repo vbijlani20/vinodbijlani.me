@@ -1,8 +1,9 @@
-# Archive photos without a specific event. 'group' sets the section on the Thought Leadership page.
+# Archive photos (cover: true marks the photo shown on the Thought Leadership page) without a specific event. 'group' sets the section on the Thought Leadership page.
 - file: home-22.webp
   group: Technical presentations
   caption: A technical session on moving AI from concept to production.
 - file: home-17.webp
+  cover: true
   group: Technical presentations
   caption: Presenting a layered architecture on stage.
 - file: home-19.webp
@@ -27,6 +28,7 @@
   group: Technical presentations
   caption: Participants at an AI presentation.
 - file: home-11.webp
+  cover: true
   group: Conference photographs
   caption: Group photograph from Vinod’s conference archive.
 - file: home-26.webp

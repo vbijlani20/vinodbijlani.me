@@ -99,6 +99,8 @@ def load_keynotes():
         meta, body = read_md(d)
         folder = d.parent
         photos = sorted(p for p in (folder / "photos").glob("*") if p.suffix.lower() in IMG_EXT) if (folder / "photos").exists() else []
+        cover = [ph for ph in photos if ph.name == meta.get("cover")]
+        photos = cover + [ph for ph in photos if ph not in cover]  # the cover is shown first everywhere
         meta.update(slug=folder.name, body=body.strip(), photos=photos, folder=folder)
         items.append(meta)
     return sorted(items, key=lambda k: date_key(k.get("date")), reverse=True)
@@ -119,6 +121,11 @@ def load_posts():
 
 KEYNOTES = load_keynotes()
 GALLERY = load_yaml("gallery.yml") if (CONTENT / "gallery.yml").exists() else []
+GALLERY_GROUPS = {}
+for _g in GALLERY:
+    GALLERY_GROUPS.setdefault(_g.get("group") or "On stage", []).append(_g)
+for _name, _items in GALLERY_GROUPS.items():
+    _items.sort(key=lambda g: not g.get("cover"))
 POSTS = load_posts()
 N_INVENTIONS = sum(len(g["inventions"]) for g in PATENTS)
 N_FILINGS = sum(len(i["filings"]) for g in PATENTS for i in g["inventions"])
@@ -300,17 +307,23 @@ def build_home():
     ]
     cards = "".join(f'<a href="{pg.rel(URLS[s])}"><h3>{e(t)} <span aria-hidden="true">→</span></h3><p>{e(d)}</p><span class="mono">{n} {e(u)}</span></a>' for s, n, t, d, u in explore)
 
+    hero_img = ""
+    if PROFILE.get("stage_photo"):
+        hero_img = (f'<figure class="stage-photo"><img src="{pg.rel(PROFILE["stage_photo"])}" alt="{e(PROFILE["name"])} presenting a keynote on stage" width="1100" height="732" fetchpriority="high">'
+                    + (f'<figcaption class="mono">{e(PROFILE["stage_caption"])}</figcaption>' if PROFILE.get("stage_caption") else "") + "</figure>")
+    elif PROFILE.get("photo"):
+        hero_img = f'<img class="portrait" src="{pg.rel(PROFILE["photo"])}" alt="{e(PROFILE["name"])}" width="240" height="298">'
     body = f"""<header class="hero" id="top"><div class="wrap">
   <div class="hero-top">
-    <div><div class="mono kicker">{e(PROFILE['kicker'])}</div>
-    <h1>{e(first)}<span class="last">{e(last)}</span></h1></div>
-    {f'<img class="portrait" src="{pg.rel(PROFILE["photo"])}" alt="{e(PROFILE["name"])}" width="240" height="298">' if PROFILE.get("photo") else ''}
-  </div>
-  <p class="role"><strong>{e(PROFILE['title'])}, {e(PROFILE['company'])}.</strong> {e(PROFILE['headline'])}</p>
-  <div class="cta">
-    <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Thought leadership</a>
-    <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
-    <a class="btn" href="{e(PROFILE['links']['linkedin'])}">LinkedIn</a>
+    <div class="hero-text"><div class="mono kicker">{e(PROFILE['kicker'])}</div>
+    <h1>{e(first)}<span class="last">{e(last)}</span></h1>
+    <p class="role"><strong>{e(PROFILE['title'])}, {e(PROFILE['company'])}.</strong> {e(PROFILE['headline'])}</p>
+    <div class="cta">
+      <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Thought leadership</a>
+      <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
+      <a class="btn" href="{e(PROFILE['links']['linkedin'])}">LinkedIn</a>
+    </div></div>
+    {hero_img}
   </div>
   <div class="stats">
     <div class="stat"><b>{YEARS}</b><span>years, since {PROFILE.get('career_start')}</span></div>
@@ -402,6 +415,35 @@ def photo_figure(pg, src, caption, event, credit=None, credit_url=None):
             f'<figcaption><strong>{e(event)}</strong><span>{e(caption)}</span>{cred}</figcaption></figure>')
 
 
+GROUP_BLURB = {
+    "Technical presentations": "Sessions on AI platforms, sovereign AI and the AI factory, presented with Red Hat and HPE.",
+    "Conference photographs": "With colleagues and partners at conferences and HPE exhibits.",
+}
+
+
+def slugify(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def captioned_grid(pg, photos):
+    """photos: list of (src, caption, event, credit_label, credit_url)."""
+    n = len(photos)
+    cls = n if n <= 4 else "many"
+    return f'<div class="photo-grid detail n{cls}">' + "".join(photo_figure(pg, *ph) for ph in photos) + "</div>"
+
+
+def build_photo_group(name, items):
+    pg = Page(f"speaking/photos/{slugify(name)}/index.html")
+    grid = captioned_grid(pg, [("gallery/" + g["file"], g.get("caption", ""), name, None, None) for g in items])
+    body = f"""<header class="page-head"><div class="wrap">
+  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">Photo archive · {len(items)} photos</span></div>
+  <h1 class="h1-sm">{e(name)}</h1>
+  <p class="intro">{e(GROUP_BLURB.get(name, ''))}</p>
+</div></header>
+<main class="inner"><div class="wrap">{grid}</div></main>"""
+    return pg, layout(pg, "speaking", name, f"{name}: photos of {PROFILE['name']}.", body, "gallery/" + items[0]["file"])
+
+
 def build_speaking():
     pg = Page("speaking/index.html")
     years = sorted({str(date_key(k.get("date"))[0]) for k in KEYNOTES})
@@ -425,44 +467,38 @@ def build_speaking():
   <p id="tl-status" class="mono" role="status"></p>
 </div>"""
 
-    # Events in pictures: every talk with photos, with its details beside the photos
+    # Events in pictures: one cover photo per event, linking to the event page with every photo
     events = []
     for k in KEYNOTES:
         if not k["photos"]:
             continue
-        caps = k.get("captions") or {}
-        cred = k.get("photo_credit") or ({"label": "Vinod Bijlani on LinkedIn", "url": k["linkedin"]} if k.get("linkedin") else {})
-        page = "speaking/" + k["slug"] + "/index.html"
-        figs = "".join(photo_figure(pg, keynote_photo_rel(k, ph), caps.get(ph.name) or k["event"], k["event"], cred.get("label"), cred.get("url")) for ph in k["photos"])
-        meta = " · ".join(x for x in (date_display(k.get("date")), k.get("city", "").replace("ICC ", ""), k.get("role", "")) if x)
-        acts = [f'<a class="btn primary" href="{pg.rel(page)}">Event details →</a>']
-        if k.get("linkedin"):
-            acts.append(f'<a class="btn" href="{e(k["linkedin"])}">LinkedIn post ↗</a>')
-        for l in (k.get("links") or [])[:2]:
-            acts.append(f'<a class="btn" href="{e(l["url"])}">{e(l["label"])} ↗</a>')
-        related = [p for p in POSTS if k["slug"] in (p.get("keynotes") or [])]
-        rel = "".join(f'<li><a href="{pg.rel("blog/" + p["slug"] + "/index.html")}">{e(p["title"])}</a></li>' for p in related)
-        events.append(f"""<article class="event" data-record data-kind="{' '.join(talk_kinds(k))}">
-  <div class="event-info">
-    <span class="mono">{e(meta)}</span>
-    <h3><a href="{pg.rel(page)}">{e(k['title'])}</a></h3>
+        page = pg.rel("speaking/" + k["slug"] + "/index.html")
+        cover = k["photos"][0]
+        alt = (k.get("captions") or {}).get(cover.name) or k["event"]
+        n = len(k["photos"])
+        meta = " · ".join(x for x in (date_display(k.get("date")), (k.get("city") or "").replace("ICC ", ""), k.get("role", "")) if x)
+        li = f'<a class="ev-li" href="{e(k["linkedin"])}">LinkedIn post ↗</a>' if k.get("linkedin") else ""
+        events.append(f"""<article class="ev-card" data-record data-kind="{' '.join(talk_kinds(k))}">
+  <a class="ev-cover" href="{page}"><img src="{pg.rel(keynote_photo_rel(k, cover))}" alt="{e(alt)}" loading="lazy"><span class="ev-count mono">{n} photo{'s' if n != 1 else ''}</span></a>
+  <div class="ev-body"><span class="mono">{e(meta)}</span>
+    <h3><a href="{page}">{e(k['title'])}</a></h3>
     <p class="event-name">{e(k['event'])}</p>
-    <p>{e(first_para(k['body']))}</p>
-    {f'<div class="event-rel"><span class="mono">On the blog</span><ul>{rel}</ul></div>' if rel else ''}
-    <div class="event-acts">{"".join(acts)}</div>
-    <span class="mono count">{len(k['photos'])} photo{'s' if len(k['photos']) != 1 else ''}</span>
+    <p class="ev-sum">{e(first_para(k['body'], 170))}</p>
+    <div class="ev-foot"><a class="ev-more" href="{page}">View event and {n} photo{'s' if n != 1 else ''} →</a>{li}</div>
   </div>
-  <div class="photo-grid n{len(k['photos']) if len(k['photos']) <= 4 else 'many'}">{figs}</div>
 </article>""")
 
-    # Archive photos grouped by theme
-    groups = {}
-    for g in GALLERY:
-        groups.setdefault(g.get("group") or "On stage", []).append(g)
-    archive = "".join(
-        f'<section class="archive" data-record data-kind="talk keynote panel webinar"><h3 class="sub-h">{e(name)}<span class="mono"> · {len(items)} photos</span></h3><div class="photo-grid wide">'
-        + "".join(photo_figure(pg, "gallery/" + g["file"], g.get("caption", ""), name) for g in items) + "</div></section>"
-        for name, items in groups.items())
+    # Archive photos without a specific event: one cover per group, linking to the group page
+    archive = []
+    for name, items in GALLERY_GROUPS.items():
+        page = pg.rel("speaking/photos/" + slugify(name) + "/index.html")
+        g0 = items[0]
+        archive.append(f"""<article class="ev-card" data-record data-kind="talk keynote panel webinar">
+  <a class="ev-cover" href="{page}"><img src="{pg.rel('gallery/' + g0['file'])}" alt="{e(g0.get('caption', ''))}" loading="lazy"><span class="ev-count mono">{len(items)} photos</span></a>
+  <div class="ev-body"><span class="mono">Photo archive</span><h3><a href="{page}">{e(name)}</a></h3>
+    <p class="ev-sum">{e(GROUP_BLURB.get(name, ''))}</p>
+    <div class="ev-foot"><a class="ev-more" href="{page}">View {len(items)} photos →</a></div></div>
+</article>""")
 
     # Full archive of talks by year
     by_year = {}
@@ -490,9 +526,9 @@ def build_speaking():
 <main class="inner"><div class="wrap">{jump}{finder}
 <div id="tl-results">
 <div class="sec-head" id="events"><span class="stop">→</span><h2>Events in pictures</h2></div>
-<div class="events" data-group>{"".join(events)}</div>
+<div class="ev-grid" data-group>{"".join(events)}</div>
 <div class="sec-head" id="archive" style="margin-top:64px"><span class="stop">→</span><h2>Photo archive</h2></div>
-<div data-group>{archive}</div>
+<div class="ev-grid" data-group>{"".join(archive)}</div>
 <div class="sec-head" id="all-talks" style="margin-top:64px"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
 {"".join(parts)}
 <p class="empty" hidden>No talks match. Try a different word or clear the search.</p>
@@ -505,8 +541,10 @@ def build_keynote(k):
     gallery = ""
     if k["photos"]:
         caps = k.get("captions") or {}
-        figs = "".join(f'<a class="g-item" href="photos/{e(p.name)}" data-lightbox><img src="photos/{e(p.name)}" alt="{e(caps.get(p.name) or (k["event"] + " photo " + str(i + 1)))}" loading="lazy"></a>' for i, p in enumerate(k["photos"]))
-        gallery = f'<div class="gallery g-{min(len(k["photos"]), 4)}{" many" if len(k["photos"]) > 4 else ""}">{figs}</div>'
+        cred = k.get("photo_credit") or ({"label": "Vinod Bijlani on LinkedIn", "url": k["linkedin"]} if k.get("linkedin") else {})
+        n = len(k["photos"])
+        gallery = (f'<h2 class="sub-h">Photos <span class="mono">· {n}</span></h2>'
+                   + captioned_grid(pg, [(keynote_photo_rel(k, ph), caps.get(ph.name) or k["event"], k["event"], cred.get("label"), cred.get("url")) for ph in k["photos"]]))
     links = list(k.get("links") or [])
     if k.get("linkedin"):
         links.insert(0, {"label": "Read the LinkedIn post", "url": k["linkedin"]})
@@ -522,7 +560,7 @@ def build_keynote(k):
   <p class="intro">{e(k['event'])}</p>
   {f'<div class="cta">{btns}</div>' if btns else ''}
 </div></header>
-<main class="inner"><div class="wrap">{gallery}<div class="prose">{md(k['body'])}</div>{rel_html}</div></main>"""
+<main class="inner"><div class="wrap"><div class="prose">{md(k['body'])}</div>{gallery}{rel_html}</div></main>"""
     img = keynote_photo_rel(k, k["photos"][0]) if k["photos"] else None
     return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img)
 
@@ -680,6 +718,7 @@ def main():
     pages = [build_home(), build_experience(), build_speaking(), build_blog_index(), build_publications(),
              build_books(), build_papers(), build_patents(), build_404()]
     pages += [build_keynote(k) for k in KEYNOTES]
+    pages += [build_photo_group(n, items) for n, items in GALLERY_GROUPS.items()]
     pages += [build_post(p) for p in POSTS]
     # Old Wix addresses keep working
     pages += [redirect("roles.html", "experience.html", "Experience"), redirect("projects.html", "experience.html", "Experience"),

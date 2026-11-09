@@ -4,6 +4,7 @@ event: Sovereign AI keynote
 date: 2026-05
 city: ''
 role: Keynote
+cover: 01.webp
 captions:
   01.webp: Delivering a keynote on sovereign AI.
   02.webp: Presenting AI Factory use cases for agents.

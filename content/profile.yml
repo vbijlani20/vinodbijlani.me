@@ -39,3 +39,6 @@ route:
   - {year: "2005", city: Pune, what: IBM}
   - {year: "2009", city: Singapore, what: IBM · HPE}
   - {year: "2022", city: Melbourne, what: HPE}
+# Home page photo: Vinod presenting. 'photo' (headshot) is still used for link previews.
+stage_photo: assets/img/vinod-on-stage.webp
+stage_caption: Keynote at the w.media Sydney Cloud & Datacenter Convention, September 2026. Photo by W.Media.
