@@ -512,7 +512,7 @@ def build_speaking():
   <p id="tl-status" class="mono" role="status"></p>
 </div>"""
 
-    # Events in pictures: one cover photo per event, linking to the event page with every photo
+    # On stage: one cover photo per event, linking to the event page with every photo
     events = []
     for k in KEYNOTES:
         if not k["photos"] or k.get("graphic"):  # graphic: a title card or diagram, not an event photo
@@ -571,15 +571,15 @@ def build_speaking():
   <p class="tl-body">{e(k['event'])}</p>{f'<p class="tl-sum">{e(summ)}</p>' if summ else ''}<div class="chips">{badges}</div></div>{thumb}</a></li>""")
         parts.append(f'<div class="year-group" data-group><div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol></div>')
 
-    jump = '<nav class="jump mono" aria-label="On this page"><a href="#all-talks">All talks</a><a href="#events">Events in pictures</a><a href="#archive">Photo archive</a></nav>'
+    jump = '<nav class="jump mono" aria-label="On this page"><a href="#events">On stage</a><a href="#all-talks">All talks</a><a href="#archive">Photo archive</a></nav>'
     body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
                      [], page_art(pg, "speaking")) + f"""
 <main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
-<div class="sec-head" id="all-talks"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
-{"".join(parts)}
-<div class="sec-head" id="events" style="margin-top:64px"><span class="stop">→</span><h2>Events in pictures</h2></div>
+<div class="sec-head" id="events"><span class="stop">→</span><h2>On stage</h2></div>
 <div class="ev-grid" data-group>{"".join(events)}</div>
+<div class="sec-head" id="all-talks" style="margin-top:64px"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
+{"".join(parts)}
 <div class="sec-head" id="archive" style="margin-top:64px"><span class="stop">→</span><h2>Photo archive</h2></div>
 <div class="ev-grid" data-group>{"".join(archive)}</div>
 <p class="empty" hidden>No talks match. Try a different word or clear the search.</p>
