@@ -752,7 +752,8 @@ def build_publications():
         spotlight += (f'<article class="wp-card"><div><span class="mono">Whitepaper · {e(wp["outlet"])} · {e(date_display(wp["date"]))}</span>'
                       f'<h3>{e(wp["title"])}</h3><p class="wp-authors">{e(wp.get("authors", ""))}</p><p>{e(wp.get("summary", ""))}</p></div>'
                       f'<div class="wp-side"><ul>' + "".join(f"<li>{e(x)}</li>" for x in wp.get("covers", [])) + '</ul>'
-                      f'<a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a></div></article>')
+                      f'<div class="cta" style="margin-top:0"><a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a>'
+                      + (f'<a class="btn" href="{e(wp["related"]["url"])}">Read on CDOTrends ↗</a>' if wp.get("related") else "") + '</div></div></article>')
     body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
                      [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles")], page_art(pg, "publications"),
                      '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
