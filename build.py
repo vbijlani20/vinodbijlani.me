@@ -135,6 +135,9 @@ POSTS = load_posts()
 N_INVENTIONS = sum(len(g["inventions"]) for g in PATENTS)
 N_FILINGS = sum(len(i["filings"]) for g in PATENTS for i in g["inventions"])
 OFFICES = sorted({f[0] for g in PATENTS for i in g["inventions"] for f in i["filings"]})
+_FILING_YEARS = sorted(int(f[1][-4:]) for g in PATENTS for i in g["inventions"] for f in i["filings"])
+FIRST_FILING, LAST_FILING = _FILING_YEARS[0], _FILING_YEARS[-1]
+AI_SINCE = int(PROFILE.get("ai_since", FIRST_FILING))
 OFFICE_NAMES = dict(US="United States", WO="WIPO (PCT)", EP="Europe", JP="Japan", CN="China", KR="Korea", GB="United Kingdom", DE="Germany")
 YEARS = dt.date.today().year - int(PROFILE.get("career_start", 1998))
 N_FORBES = sum(1 for a in ARTICLES if a.get("outlet") == "Forbes" and a.get("type") == "article")
@@ -420,8 +423,8 @@ def build_experience():
         if r["org"] not in orgs:
             orgs.append(r["org"])
     n_projects = sum(len(r.get("projects", [])) for r in EXPERIENCE)
-    body = page_head("01", "Experience", f"{YEARS} years from server administration to leading AI practice across Asia Pacific, with the projects delivered along the way.",
-                     [(YEARS, "years"), (len(EXPERIENCE), "roles"), (n_projects, "featured projects"), (len(orgs), "organisations")], page_art(pg, "experience")) + \
+    body = page_head("01", "Experience", f"{YEARS} years from server administration to leading AI practice across Asia Pacific. Building AI solutions since {AI_SINCE}, with the projects delivered along the way.",
+                     [(YEARS, "years"), (len(EXPERIENCE), "roles"), (f"Since {AI_SINCE}", "building AI solutions")], page_art(pg, "experience")) + \
         f'<main class="inner"><div class="wrap"><ul class="logos" aria-label="Organisations">{"".join(f"<li>{e(o)}</li>" for o in orgs)}</ul><ol class="timeline">{"".join(items)}</ol></div></main>'
     return pg, layout(pg, "experience", "Experience", f"Career and projects of {PROFILE['name']}: HPE, IBM, Kroger, Northwestern Mutual, Citibank and Kvaerner.", body)
 
@@ -797,8 +800,8 @@ def build_patents():
             n = len(inv["filings"])
             cards.append(f'<article class="patent"><h3>{e(inv["title"])}</h3><div class="count">{n}<small>{"filing" if n == 1 else "filings"}</small></div><div class="filings">{fl}</div></article>')
         parts.append(f'<div class="group-title">{e(g["group"])} <span class="mono">{len(g["inventions"])} inventions</span></div><div class="grid2">{"".join(cards)}</div>')
-    body = page_head("07", "Patents", "Inventions in data analytics for smart transportation, retail, interactive media and networking. IBM Master Inventor.",
-                     [], f'<figure class="head-art patent-art" aria-hidden="true"><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor · {" · ".join(OFFICES)}</p></figure>') + \
+    body = page_head("07", "Patents", f"AI, machine learning and data analytics inventions since {AI_SINCE}: smart transportation, retail, interactive media and networks, filed with IBM from {FIRST_FILING} to {LAST_FILING}. IBM Master Inventor.",
+                     [], f'<figure class="head-art patent-art" aria-hidden="true"><div class="pa-lead"><b>Since {AI_SINCE}</b><span>inventing in AI, machine learning and analytics</span></div><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor · {" · ".join(OFFICES)}</p></figure>') + \
         f'<main class="inner"><div class="wrap">{"".join(parts)}<p class="note">Each filing links to its record on WIPO Patentscope.</p></div></main>'
     return pg, layout(pg, "patents", "Patents", f"Patents by {PROFILE['name']}, IBM Master Inventor.", body)
 

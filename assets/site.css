@@ -617,3 +617,10 @@ footer a:hover{color:var(--ink)}
 .wp-side ul{margin:0 0 18px;padding-left:18px;line-height:1.5}
 .wp-side li{margin-bottom:6px}
 @media (max-width:760px){.wp-card{grid-template-columns:1fr}}
+.patent-art{grid-template-columns:repeat(4,1fr)}
+.patent-art p.mono{opacity:1;color:rgba(255,255,255,.78)}
+@media (max-width:480px){.patent-art{grid-template-columns:repeat(2,1fr)}}
+.patent-art{grid-template-columns:repeat(3,1fr)}
+.patent-art .pa-lead{grid-column:1/-1;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.15)}
+.patent-art .pa-lead b{color:var(--bg)}
+@media (max-width:480px){.patent-art{grid-template-columns:repeat(3,1fr)}}
