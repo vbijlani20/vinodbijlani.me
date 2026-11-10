@@ -216,7 +216,12 @@ def page_art(pg, key):
     if not ph:
         return ""
     pos = f' style="object-position:{e(ph["pos"])}"' if ph.get("pos") else ""
-    return f'<figure class="head-art"><img src="{pg.rel(ph["src"])}" alt="{e(ph.get("alt", ""))}"{pos} fetchpriority="high"></figure>'
+    img = f'<img src="{pg.rel(ph["src"])}" alt="{e(ph.get("alt", ""))}"{pos} fetchpriority="high">'
+    if ph.get("link"):
+        href = ph["link"] if ph["link"].startswith("http") else pg.rel(ph["link"])
+        img = f'<a href="{e(href)}">{img}</a>'
+    cls = "head-art natural" if ph.get("fit") == "natural" else "head-art"
+    return f'<figure class="{cls}">{img}</figure>'
 
 
 def page_head(num, title, intro, facts, art=""):

@@ -46,6 +46,6 @@ stage_caption: Keynote at the w.media Sydney Cloud & Datacenter Convention, Sept
 page_photos:
   experience: {src: speaking/2026-10-hpe-discover-more-taipei/photos/02.jpg, alt: Vinod at the HPE showcase in Taipei, pos: "50% 62%"}
   speaking: {src: speaking/2026-10-hpe-discover-more-hong-kong/photos/01.jpg, alt: Vinod moderating a panel at HPE Discover More Hong Kong}
-  blog: {src: gallery/home-17.webp, alt: Vinod presenting an AI factory architecture on stage}
-  publications: {src: speaking/2026-10-hpe-discover-more-hong-kong-ai-factory/photos/01.jpg, alt: Vinod presenting From AI Factory to Token Economy}
+  blog: {src: assets/img/beyond-tokenomics.webp, alt: "Beyond Tokenomics: the hidden economics of enterprise AI, an infographic by Vinod Bijlani", fit: natural, link: blog/tokenomics-and-datanomics/index.html}
+  publications: {src: assets/img/forbes-which-ai-workload.webp, alt: "Which AI Workload Goes Where? A CIO's Guide To Hybrid AI, by Vinod Bijlani in Forbes", fit: natural, link: "https://www.forbes.com/councils/forbestechcouncil/2026/10/08/which-ai-workload-goes-where-a-cios-guide-to-hybrid-ai/"}
   papers: {src: speaking/2020-11-rics-redas-smart-buildings/photos/02.jpg, alt: Vinod presenting Smart Buildings in a Covid-free World}
