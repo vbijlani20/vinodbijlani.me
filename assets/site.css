@@ -595,3 +595,8 @@ footer a:hover{color:var(--ink)}
 .head-art.natural a{display:block;line-height:0}
 .head-art.natural img{width:auto;max-width:100%;max-height:min(520px,62vh);aspect-ratio:auto;object-fit:contain;background:#fff}
 .head-art.natural a:hover img{transform:translateY(-2px);transition:transform .2s}
+
+/* v13: header numbers under the intro (left column); keep the header compact */
+.head-text .head-stats{margin-top:26px;max-width:520px}
+.head-art.natural img{max-height:min(420px,56vh)}
+.with-art .head-art:not(.natural) img{max-height:400px}

@@ -233,10 +233,11 @@ def page_head(num, title, intro, facts, art=""):
   {f'<div class="facts">{f}</div>' if f else ''}
 </div>"""
     if art:
-        text = text.replace(f'<div class="facts">{f}</div>', "") if f else text
+        # numbers sit under the title and intro, in the same style as the home page
         nums = "".join(f'<div class="stat"><b>{e(str(n))}</b><span>{e(label)}</span></div>' for n, label in facts)
-        side = f'<div class="head-side">{art}{f"<div class=\"stats compact head-stats\">{nums}</div>" if nums else ""}</div>'
-        return f'<header class="page-head with-art"><div class="wrap head-grid">{text}{side}</div></header>'
+        if f:
+            text = text.replace(f'<div class="facts">{f}</div>', f'<div class="stats compact head-stats">{nums}</div>')
+        return f'<header class="page-head with-art"><div class="wrap head-grid">{text}<div class="head-side">{art}</div></div></header>'
     return f'<header class="page-head"><div class="wrap">{text}</div></header>'
 
 
