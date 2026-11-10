@@ -5,7 +5,7 @@ summary: "Edge AI is the bridge to physical AI. Scaling it safely needs a distri
 tags: [Edge AI, AI factories, Physical AI]
 series: dc
 strand: factory
-keynotes: [2026-09-wmedia-sydney]
+keynotes: [2026-09-wmedia-sydney, 2026-08-suse-summit-sydney-keynote]
 infographic:
   type: steps
   title: The distributed AI factory

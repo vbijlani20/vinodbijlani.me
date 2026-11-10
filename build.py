@@ -581,6 +581,15 @@ def build_speaking():
     return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes, panels and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI, with photos and event details.", body)
 
 
+def video_embed(k):
+    m = re.search(r"(?:v=|youtu\.be/)([\w-]{11})", k.get("video") or "")
+    if not m:
+        return ""
+    return (f'<h2 class="sub-h">Recording</h2><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/{m.group(1)}" '
+            f'title="{e(k["title"])}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" '
+            'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>')
+
+
 def build_keynote(k):
     pg = Page(f"speaking/{k['slug']}/index.html")
     gallery = ""
@@ -609,7 +618,7 @@ def build_keynote(k):
   <p class="intro">{e(k['event'])}</p>
   {f'<div class="cta">{btns}</div>' if btns else ''}
 </div>{art}</div></header>
-<main class="inner"><div class="wrap"><div class="prose">{md(k['body'])}</div>{gallery}{rel_html}</div></main>"""
+<main class="inner"><div class="wrap"><div class="prose">{md(k['body'])}</div>{video_embed(k)}{gallery}{rel_html}</div></main>"""
     img = keynote_photo_rel(k, k["photos"][0]) if k["photos"] else None
     return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img)
 

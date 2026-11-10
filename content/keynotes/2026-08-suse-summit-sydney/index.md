@@ -1,7 +1,7 @@
 ---
 title: 'Customer panel: enterprise AI in production'
 event: SUSE Summit Sydney 2026
-date: 2026-08
+date: '2026-08-11'
 city: Sydney
 role: Panellist
 cover: 03.webp
@@ -13,3 +13,5 @@ captions:
 ---
 
 Customer panel at SUSE Summit Sydney on running enterprise AI on open, secure and sovereign platforms.
+
+Earlier the same day: [the AI at the Edge keynote](../2026-08-suse-summit-sydney-keynote/index.html).

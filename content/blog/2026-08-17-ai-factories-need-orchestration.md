@@ -5,7 +5,7 @@ summary: Takeaways from the SUSE Summit Sydney customer panel on what it takes t
 tags: [AI factories, Data centres, Hybrid AI]
 series: dc
 strand: factory
-keynotes: [2026-08-suse-summit-sydney]
+keynotes: [2026-08-suse-summit-sydney, 2026-08-suse-summit-sydney-keynote]
 infographic:
   type: steps
   title: Four lessons from the SUSE Summit panel
