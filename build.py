@@ -766,14 +766,16 @@ def build_books():
             continue
         meta = " · ".join(str(x) for x in [b.get("publisher"), b.get("year")] if x)
         links = "".join(f'<a class="btn{" primary" if i == 0 else ""}" href="{e(l["url"])}">{e(l["label"])} ↗</a>' for i, l in enumerate(b.get("links") or []))
-        cards.append(f"""<article class="card{' feature' if b.get('featured') else ''}">
+        cover = (f'<a class="card-cover" href="{e(b["links"][0]["url"])}"><img src="{pg.rel(b["cover"])}" alt="{e(b["title"])} cover"></a>'
+                 if b.get("cover") else "")
+        cards.append(f"""<article class="card{' feature' if b.get('featured') else ''}{' with-cover' if cover else ''}">{cover}
   <div><span class="mono">{e(b['kind'])} · {e(meta)}</span><h3 style="margin-top:6px">{e(b['title'])}</h3>{f'<p class="role-line">{e(b["book"])}</p>' if b.get('book') else ''}{f'<p class="role-line">{e(b["authors"])}</p>' if b.get('authors') else ''}</div>
   <p>{e(b.get('description', ''))}</p>
   {f'<div class="cta" style="margin-top:auto">{links}</div>' if links else ''}
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
     body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], f'<figure class="head-art natural"><a href="https://www.amazon.com/dp/B0GS7C6DN4"><img src="{pg.rel("assets/img/own-your-ai-cover.webp")}" alt="Own Your AI: The Sovereign Stack Playbook for Nations and Enterprises, by Prem Naraindas and Vinod Bijlani"></a></figure>') + \
+                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 

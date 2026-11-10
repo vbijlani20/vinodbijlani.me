@@ -9,6 +9,7 @@
     - {label: Buy on Amazon, url: "https://www.amazon.com/dp/B0GS7C6DN4"}
     - {label: Book website, url: "https://ownaistack.com/"}
   featured: true
+  cover: assets/img/own-your-ai-cover.webp
 
 - kind: Book chapter
   title: "Smart Green Buildings for Advancing Corporate Social Responsibility Goals"

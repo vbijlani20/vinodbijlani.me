@@ -632,3 +632,10 @@ footer a:hover{color:var(--ink)}
 .head-stats .stat-wide a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)}
 .head-stats .stat-wide a:hover{color:var(--accent)}
 .head-stats.has-wide .stat:first-child{padding-right:20px}
+/* v16: book cover inside the featured book card */
+.card.with-cover{grid-template-columns:150px 1fr 1fr!important;align-items:start}
+.card-cover{display:block;grid-row:span 2}
+.card-cover img{display:block;width:100%;height:auto;border-radius:4px;box-shadow:8px 10px 0 -3px var(--accent)}
+.card.with-cover .cta{grid-column:2/-1}
+@media (max-width:760px){.card.with-cover{grid-template-columns:110px 1fr!important}.card.with-cover > p,.card.with-cover .cta{grid-column:1/-1}}
+.card-cover{max-width:170px}
