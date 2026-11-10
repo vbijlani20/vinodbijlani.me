@@ -436,8 +436,9 @@ def build_experience():
         in_ai = in_ai or j.get("ai") == "start"
         cls = " ".join(c for c in ("ai" if in_ai else "", "ai-start" if j.get("ai") == "start" else "", "now" if j.get("now") else "") if c)
         tag = f'<span class="ai-tag">AI since {e(str(j["year"]))}</span>' if j.get("ai") == "start" else ""
-        stops.append(f'<li class="{cls}"><span class="yr">{e(str(j["year"]))}</span>{tag}<span class="place">{e(j["place"])}</span>'
-                     f'<span class="what">{e(j.get("what", ""))}</span><span class="org">{e(j.get("org", ""))}</span></li>')
+        place = f'<span class="city">{e(j["place"])}</span>' if j.get("place") else ""
+        stops.append(f'<li class="{cls}"><span class="yr">{e(str(j["year"]))}</span>{tag}<span class="role">{e(j.get("what", ""))}</span>'
+                     f'<span class="org">{e(j.get("org", ""))}</span>{place}</li>')
     journey = (f'<section class="journey" aria-labelledby="journey-h"><div class="sec-head"><span class="stop">→</span><h2 id="journey-h">Career journey</h2></div>'
                f'<ol style="--n:{len(stops)}">{"".join(stops)}</ol>'
                f'<p class="journey-key mono"><span class="k-pre"></span>Infrastructure and architecture <span class="k-ai"></span>Building AI solutions, since {AI_SINCE}</p></section>') if stops else ""

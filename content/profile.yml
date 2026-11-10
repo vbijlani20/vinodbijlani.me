@@ -48,7 +48,7 @@ journey:
   - {year: "2002", place: Milwaukee, what: Systems administrator, org: Northwestern Mutual}
   - {year: "2003", place: Cincinnati, what: Infrastructure architect, org: Kroger}
   - {year: "2005", place: Pune, what: Retail solution architect, org: IBM}
-  - {year: "2008", place: AI starts, what: Traffic prediction models, org: IBM, ai: start}
+  - {year: "2008", place: "", what: AI solutions begin, org: "IBM, traffic prediction models", ai: start}
   - {year: "2009", place: Singapore, what: Chief product architect, org: IBM Intelligent Operations Center}
   - {year: "2015", place: Singapore, what: Executive architect, org: IBM Smarter Cities}
   - {year: "2019", place: Singapore, what: AI practice leader, org: Hewlett Packard Enterprise}
