@@ -600,3 +600,20 @@ footer a:hover{color:var(--ink)}
 .head-text .head-stats{margin-top:26px;max-width:520px}
 .head-art.natural img{max-height:min(420px,56vh)}
 .with-art .head-art:not(.natural) img{max-height:400px}
+
+/* v14: header note line, real book cover, whitepaper card */
+.head-note{margin:14px 0 0;font-size:15px;line-height:1.55;color:var(--ink);max-width:560px}
+.head-note .mono{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.head-note a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)}
+.head-note a:hover{color:var(--accent)}
+.cover-img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:12px 14px 0 -4px var(--accent)}
+.cover-link{display:block;max-width:220px}
+.head-art.natural img[src*="own-your-ai"]{max-height:min(440px,58vh)}
+.wp-card{margin-top:20px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:16px;padding:26px 28px;background:var(--surface)}
+.wp-card .mono{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wp-card h3{font-family:var(--display);font-size:clamp(22px,2.2vw,28px);line-height:1.15;margin:8px 0 6px}
+.wp-authors{margin:0 0 12px;font-weight:600}
+.wp-card p{line-height:1.55;margin:0}
+.wp-side ul{margin:0 0 18px;padding-left:18px;line-height:1.5}
+.wp-side li{margin-bottom:6px}
+@media (max-width:760px){.wp-card{grid-template-columns:1fr}}

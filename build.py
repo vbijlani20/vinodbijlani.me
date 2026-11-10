@@ -224,7 +224,7 @@ def page_art(pg, key):
     return f'<figure class="{cls}">{img}</figure>'
 
 
-def page_head(num, title, intro, facts, art=""):
+def page_head(num, title, intro, facts, art="", note=""):
     f = "".join(f"<span><b>{e(str(n))}</b>{e(label)}</span>" for n, label in facts)
     text = f"""<div class="head-text">
   <div class="crumb"><span class="stop">{num}</span><span class="mono">{e(PROFILE['name'])} · {e(title)}</span></div>
@@ -236,7 +236,7 @@ def page_head(num, title, intro, facts, art=""):
         # numbers sit under the title and intro, in the same style as the home page
         nums = "".join(f'<div class="stat"><b>{e(str(n))}</b><span>{e(label)}</span></div>' for n, label in facts)
         if f:
-            text = text.replace(f'<div class="facts">{f}</div>', f'<div class="stats compact head-stats">{nums}</div>')
+            text = text.replace(f'<div class="facts">{f}</div>', f'<div class="stats compact head-stats">{nums}</div>' + (f'<p class="head-note">{note}</p>' if note else ""))
         return f'<header class="page-head with-art"><div class="wrap head-grid">{text}<div class="head-side">{art}</div></div></header>'
     return f'<header class="page-head"><div class="wrap">{text}</div></header>'
 
@@ -326,7 +326,7 @@ def build_home():
     if book:
         bl = "".join(f'<a class="btn{" primary" if i == 0 else ""}" href="{e(l["url"])}">{e(l["label"])}</a>' for i, l in enumerate(book.get("links", [])))
         book_html = f"""<section class="block"><div class="wrap"><div class="book-feature">
-  <div class="cover" aria-hidden="true"><span>OWN<br>YOUR<br>AI</span><small>The Sovereign Stack Playbook</small></div>
+  <a class="cover-link" href="{e(book["links"][0]["url"])}"><img class="cover-img" src="{pg.rel("assets/img/own-your-ai-cover.webp")}" alt="Own Your AI book cover"></a>
   <div><span class="mono">New book · {e(str(book["year"]))}</span><h2>{e(book["title"])}</h2><p class="muted">{e(book["authors"])}</p><p>{e(book["description"])}</p><div class="cta">{bl}</div></div>
 </div></div></section>"""
 
@@ -666,7 +666,8 @@ def build_blog_index():
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
         + post_visual(pg, p) + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
-                     [(len(POSTS), "posts"), (len([q for q in POSTS if q.get("series") == "dc"]), "on data centres and AI factories"), (len(STRANDS), "themes")], page_art(pg, "blog")) + \
+                     [(len(POSTS), "posts"), (len([q for q in POSTS if q.get("series") == "dc"]), "on data centres and AI factories")], page_art(pg, "blog"),
+                     '<span class="mono">Themes</span>' + " · ".join(f'<a href="#data-centres">{e(name)}</a>' for _, name, _ in STRANDS)) + \
         f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
     return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on data centres, AI factories, token economics, sovereign AI and governance.", body)
 
@@ -705,6 +706,9 @@ def build_post(p):
     return pg, layout(pg, "blog", p["title"], p.get("summary", p["title"]), body, ("blog/" + p["image"]) if p.get("image") else None)
 
 
+FEATURED_OUTLETS = ["World Economic Forum", "Forbes", "The Business Times (Singapore)", "Singapore Business Review", "CDOTrends", "Forbes Brasil"]
+
+
 def build_publications():
     pg = Page("publications.html")
     topics = {}
@@ -713,7 +717,7 @@ def build_publications():
     topics = dict(sorted(topics.items(), key=lambda t: -t[1]))
     buttons = f'<button type="button" aria-pressed="true" data-topic="all">All<span>{len(ARTICLES)}</span></button>' + "".join(
         f'<button type="button" aria-pressed="false" data-topic="{e(t)}">{e(t)}<span>{n}</span></button>' for t, n in topics.items())
-    label = {"article": "Article", "panel": "Expert panel", "interview": "Interview"}
+    label = {"article": "Article", "panel": "Expert panel", "interview": "Interview", "whitepaper": "Whitepaper"}
     rows = "".join(
         f'<li data-topic="{e(a["topic"])}">' + row(a.get("url", ""),
             f'<span class="mono">{e(a["outlet"])} · {e(date_display(a["date"]))}</span><span class="chips"><span class="chip{" hot" if a.get("type") == "article" and a["outlet"].startswith("Forbes") else ""}">{label.get(a.get("type"), "Article")}</span></span>',
@@ -741,8 +745,14 @@ def build_publications():
                  f'<p class="focus-note">Most of this writing appears in Forbes, where Vinod is a member of the Forbes Technology Council: {len(forbes_articles)} articles and {len(forbes_all) - len(forbes_articles)} expert panels. '
                  f'<a href="{e(PROFILE["links"]["forbes"])}">Forbes profile ↗</a></p>'
                  f'<div class="focus-grid two">{"".join(cards)}</div>')
+    for wp in [a for a in ARTICLES if a.get("type") == "whitepaper"]:
+        spotlight += (f'<article class="wp-card"><div><span class="mono">Whitepaper · {e(wp["outlet"])} · {e(date_display(wp["date"]))}</span>'
+                      f'<h3>{e(wp["title"])}</h3><p class="wp-authors">{e(wp.get("authors", ""))}</p><p>{e(wp.get("summary", ""))}</p></div>'
+                      f'<div class="wp-side"><ul>' + "".join(f"<li>{e(x)}</li>" for x in wp.get("covers", [])) + '</ul>'
+                      f'<a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a></div></article>')
     body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
-                     [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles"), (outlets, "outlets")], page_art(pg, "publications")) + \
+                     [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles")], page_art(pg, "publications"),
+                     '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
         f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" id="all-publications" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
     return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} for the World Economic Forum, Forbes, CDOTrends and more.", body)
 
@@ -763,7 +773,7 @@ def build_books():
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
     body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], '<figure class="head-art book-art"><div class="cover" aria-hidden="true"><span>OWN<br>YOUR<br>AI</span><small>The Sovereign Stack Playbook</small></div></figure>') + \
+                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], f'<figure class="head-art natural"><a href="https://www.amazon.com/dp/B0GS7C6DN4"><img src="{pg.rel("assets/img/own-your-ai-cover.webp")}" alt="Own Your AI: The Sovereign Stack Playbook for Nations and Enterprises, by Prem Naraindas and Vinod Bijlani"></a></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
