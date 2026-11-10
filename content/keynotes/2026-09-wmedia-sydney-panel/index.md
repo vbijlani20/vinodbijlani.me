@@ -1,6 +1,6 @@
 ---
 title: 'Neo Clouds vs Hyperscalers: The New Battle for AI Infrastructure'
-event: w.media Sydney Cloud & Datacenter Convention 2026
+event: Sydney Cloud & Datacenter Convention 2026
 date: '2026-09-17'
 city: ICC Sydney
 role: Panellist

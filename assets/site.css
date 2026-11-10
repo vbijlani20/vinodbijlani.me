@@ -689,3 +689,36 @@ footer a:hover{color:var(--ink)}
   .js .menu-panel ul a{font-size:18px;padding:9px 0}
   .js .menu-panel ul a[aria-current="page"]::before{width:12px;height:3px;margin-right:9px}
 }
+
+/* v21: career journey on the Experience page */
+.journey ol{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:0;position:relative}
+.journey li{position:relative;padding:40px 10px 0 0;display:flex;flex-direction:column;gap:2px}
+.journey li::before{content:"";position:absolute;top:12px;left:0;right:0;height:6px;background:var(--line)}
+.journey li:first-child::before{border-radius:6px 0 0 6px}
+.journey li:last-child::before{border-radius:0 6px 6px 0}
+.journey li.ai::before{background:var(--accent)}
+.journey li::after{content:"";position:absolute;top:4px;left:0;width:22px;height:22px;box-sizing:border-box;border-radius:50%;background:var(--bg);border:5px solid var(--ink)}
+.journey li.ai-start::after{background:var(--accent);border-color:var(--ink);transform:scale(1.25)}
+.journey li.now::after{background:var(--accent)}
+.journey .yr{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.journey .place{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2;margin-top:2px}
+.journey .what{font-size:13.5px;line-height:1.35}
+.journey .org{font-size:13px;line-height:1.35;color:var(--muted)}
+.journey .ai-tag{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:3px 8px;border-radius:999px;margin:4px 0 2px;white-space:nowrap}
+.journey li.ai-start .place{color:var(--ink)}
+.journey-key{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px;color:var(--muted);margin:22px 0 0}
+.journey-key span{display:inline-block;width:26px;height:6px;border-radius:6px;background:var(--line)}
+.journey-key .k-ai{background:var(--accent);margin-left:12px}
+@media (max-width:900px){
+  .journey ol{display:block;margin-top:4px}
+  .journey li{padding:0 0 20px 38px}
+  .journey li::before{top:0;bottom:0;left:8px;right:auto;width:6px;height:auto;border-radius:0}
+  .journey li:first-child::before{top:12px;border-radius:6px 6px 0 0}
+  .journey li:last-child::before{bottom:auto;height:14px;border-radius:0 0 6px 6px}
+  .journey li::after{top:2px;left:0}
+  .journey .place{font-size:18px}
+}
+@media (min-width:901px){
+  .journey ol{padding-top:30px}
+  .journey .ai-tag{position:absolute;top:-30px;left:-4px;margin:0}
+}

@@ -1,6 +1,6 @@
 ---
 title: 'AI & Cloud Transformation Across Industries: Lessons from Pilots to Enterprise Rollouts'
-event: w.media Melbourne Cloud & Datacenter Convention 2026
+event: Melbourne Cloud & Datacenter Convention 2026
 date: '2026-04-23'
 city: Melbourne
 role: Panellist

@@ -419,7 +419,7 @@ def build_experience():
   <div class="outcome"><b>{e(str(p['big']))}</b><span>{e(p['small'])}</span></div>
 </article>""")
             projects = f'<div class="grid2 projects">{"".join(cards)}</div>'
-        items.append(f"""<li class="{'now' if r.get('now') else ''}">
+        items.append(f"""<li id="role-{len(items) + 1}" class="{'now' if r.get('now') else ''}">
   <div class="tl-head"><h3>{e(r['title'])}</h3><span class="tl-org">{e(r['org'])}</span></div>
   <div class="tl-meta">{e(r['years'])} · {e(r['place'])}</div>
   <p class="tl-body">{e(r['summary'])}</p>
@@ -430,9 +430,20 @@ def build_experience():
         if r["org"] not in orgs:
             orgs.append(r["org"])
     n_projects = sum(len(r.get("projects", [])) for r in EXPERIENCE)
+    # Career journey: oldest first; from the 'ai: start' stop onwards the track turns amber
+    stops, in_ai = [], False
+    for j in PROFILE.get("journey", []):
+        in_ai = in_ai or j.get("ai") == "start"
+        cls = " ".join(c for c in ("ai" if in_ai else "", "ai-start" if j.get("ai") == "start" else "", "now" if j.get("now") else "") if c)
+        tag = f'<span class="ai-tag">AI since {e(str(j["year"]))}</span>' if j.get("ai") == "start" else ""
+        stops.append(f'<li class="{cls}"><span class="yr">{e(str(j["year"]))}</span>{tag}<span class="place">{e(j["place"])}</span>'
+                     f'<span class="what">{e(j.get("what", ""))}</span><span class="org">{e(j.get("org", ""))}</span></li>')
+    journey = (f'<section class="journey" aria-labelledby="journey-h"><div class="sec-head"><span class="stop">→</span><h2 id="journey-h">Career journey</h2></div>'
+               f'<ol style="--n:{len(stops)}">{"".join(stops)}</ol>'
+               f'<p class="journey-key mono"><span class="k-pre"></span>Infrastructure and architecture <span class="k-ai"></span>Building AI solutions, since {AI_SINCE}</p></section>') if stops else ""
     body = page_head("01", "Experience", f"{YEARS} years from server administration to leading AI practice across Asia Pacific. Building AI solutions since {AI_SINCE}, with the projects delivered along the way.",
                      [(YEARS, "years"), (len(EXPERIENCE), "roles"), (f"Since {AI_SINCE}", "building AI solutions")], page_art(pg, "experience")) + \
-        f'<main class="inner"><div class="wrap"><ul class="logos" aria-label="Organisations">{"".join(f"<li>{e(o)}</li>" for o in orgs)}</ul><ol class="timeline">{"".join(items)}</ol></div></main>'
+        f'<main class="inner"><div class="wrap">{journey}<div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Roles and projects</h2></div><ul class="logos" aria-label="Organisations">{"".join(f"<li>{e(o)}</li>" for o in orgs)}</ul><ol class="timeline">{"".join(items)}</ol></div></main>'
     return pg, layout(pg, "experience", "Experience", f"Career and projects of {PROFILE['name']}: HPE, IBM, Kroger, Northwestern Mutual, Citibank and Kvaerner.", body)
 
 
