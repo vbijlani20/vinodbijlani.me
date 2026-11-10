@@ -2,6 +2,8 @@
 title: "Global data centre capacity in 2026, and who actually controls it"
 date: 2026-09-08
 summary: "Operational capacity across 20 major markets, and the four kinds of operator behind it. The winners may be those who get the most value from every megawatt."
+image: media/global-data-centre-capacity-2026.gif
+image_alt: "Global data centre capacity as of June 2026, by country, from the United States at 48 GW to Thailand at 0.14 GW"
 tags: [Data centres, AI infrastructure, Neoclouds]
 series: dc
 strand: buildout
