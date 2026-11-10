@@ -177,11 +177,17 @@ def layout(pg, current, title, description, body, image=None):
 <link rel="stylesheet" href="{pg.rel('assets/site.css')}?v={ASSET_V}">
 </head>
 <body>
+<script>document.documentElement.classList.add('js')</script>
 <nav class="site-nav" aria-label="Main">
   <div class="wrap">
     <a class="brand" href="{pg.rel('index.html')}">{e(PROFILE['name'])}<span class="dash" aria-hidden="true"></span></a>
-    <ul>{nav}</ul>
+    <button class="menu-btn" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <div class="menu-panel" id="site-menu">
+      <button class="menu-close" type="button" aria-label="Close menu">×</button>
+      <ul><li class="menu-home"><a href="{pg.rel('index.html')}"{' aria-current="page"' if current == 'home' else ''}>Home</a></li>{nav}</ul>
+    </div>
   </div>
+  <div class="menu-scrim" hidden></div>
 </nav>
 {body}
 <div class="wrap">

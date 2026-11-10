@@ -83,3 +83,21 @@
     if (ev.key === 'ArrowRight') show(idx + 1);
   });
 })();
+
+// Mobile menu: slide-in panel
+(function () {
+  var nav = document.querySelector('.site-nav'); if (!nav) return;
+  var btn = nav.querySelector('.menu-btn'), close = nav.querySelector('.menu-close'), scrim = nav.querySelector('.menu-scrim');
+  if (!btn) return;
+  function set(open) {
+    nav.classList.toggle('menu-open', open);
+    document.body.classList.toggle('menu-locked', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    scrim.hidden = !open;
+    if (open) { close.focus(); } else { btn.focus(); }
+  }
+  btn.addEventListener('click', function () { set(true); });
+  close.addEventListener('click', function () { set(false); });
+  scrim.addEventListener('click', function () { set(false); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && nav.classList.contains('menu-open')) set(false); });
+})();
