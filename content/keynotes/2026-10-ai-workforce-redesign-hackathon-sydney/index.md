@@ -1,7 +1,7 @@
 ---
 title: 'Redesigning work for AI: judging the AI Workforce Redesign Hackathon'
 event: AI Workforce Redesign Hackathon 2026, Humanity in Business
-date: 2026-10
+date: '2026-10-16'
 city: Sydney
 role: Judge and panellist
 cover: 01.jpg
@@ -14,7 +14,7 @@ captions:
 
 **Every task we automate changes more than productivity. It changes how people learn, make decisions and take responsibility, and how work flows through the organisation.**
 
-Those questions shaped the AI Workforce Redesign Hackathon in Sydney, hosted by Humanity in Business, where I joined as a judge. Ten teams of five worked from 8 am to 4 pm on workforce challenges, using design thinking, and presented their proposed solutions. Each team showed how differently the same challenge could be approached.
+Those questions shaped the AI Workforce Redesign Hackathon in Sydney on 16 October 2026, hosted by Humanity in Business, where I joined as a judge. Ten teams of five worked from 8 am to 4 pm on workforce challenges, using design thinking, and presented their proposed solutions. Each team showed how differently the same challenge could be approached.
 
 A few ideas stayed with me:
 
