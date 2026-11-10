@@ -624,3 +624,11 @@ footer a:hover{color:var(--ink)}
 .patent-art .pa-lead{grid-column:1/-1;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.15)}
 .patent-art .pa-lead b{color:var(--bg)}
 @media (max-width:480px){.patent-art{grid-template-columns:repeat(3,1fr)}}
+
+/* v15: named outlets / themes inside the numbers row */
+.head-stats.has-wide{grid-template-columns:auto 1fr;max-width:600px}
+.head-stats .stat-wide{padding-left:20px!important;font-size:15.5px;line-height:1.55;color:var(--ink);align-self:center}
+.head-stats .stat-wide .mono{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.head-stats .stat-wide a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)}
+.head-stats .stat-wide a:hover{color:var(--accent)}
+.head-stats.has-wide .stat:first-child{padding-right:20px}

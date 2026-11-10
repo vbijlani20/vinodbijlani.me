@@ -239,7 +239,9 @@ def page_head(num, title, intro, facts, art="", note=""):
         # numbers sit under the title and intro, in the same style as the home page
         nums = "".join(f'<div class="stat"><b>{e(str(n))}</b><span>{e(label)}</span></div>' for n, label in facts)
         if f:
-            text = text.replace(f'<div class="facts">{f}</div>', f'<div class="stats compact head-stats">{nums}</div>' + (f'<p class="head-note">{note}</p>' if note else ""))
+            # a note sits inside the numbers row as a wider cell (e.g. outlet or theme names)
+            wide = f'<div class="stat stat-wide">{note}</div>' if note else ""
+            text = text.replace(f'<div class="facts">{f}</div>', f'<div class="stats compact head-stats{" has-wide" if note else ""}">{nums}{wide}</div>')
         return f'<header class="page-head with-art"><div class="wrap head-grid">{text}<div class="head-side">{art}</div></div></header>'
     return f'<header class="page-head"><div class="wrap">{text}</div></header>'
 
@@ -669,7 +671,7 @@ def build_blog_index():
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
         + post_visual(pg, p) + '</a></li>' for p in POSTS)
     body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
-                     [(len(POSTS), "posts"), (len([q for q in POSTS if q.get("series") == "dc"]), "on data centres and AI factories")], page_art(pg, "blog"),
+                     [(len(POSTS), "posts")], page_art(pg, "blog"),
                      '<span class="mono">Themes</span>' + " · ".join(f'<a href="#data-centres">{e(name)}</a>' for _, name, _ in STRANDS)) + \
         f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
     return pg, layout(pg, "blog", "Blog", f"Blog posts by {PROFILE['name']} on data centres, AI factories, token economics, sovereign AI and governance.", body)
@@ -755,7 +757,7 @@ def build_publications():
                       f'<div class="cta" style="margin-top:0"><a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a>'
                       + (f'<a class="btn" href="{e(wp["related"]["url"])}">Read on CDOTrends ↗</a>' if wp.get("related") else "") + '</div></div></article>')
     body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
-                     [(len(ARTICLES), "publications"), (N_FORBES, "Forbes articles")], page_art(pg, "publications"),
+                     [(len(ARTICLES), "publications")], page_art(pg, "publications"),
                      '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
         f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" id="all-publications" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
     return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} for the World Economic Forum, Forbes, CDOTrends and more.", body)
