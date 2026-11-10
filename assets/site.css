@@ -639,3 +639,8 @@ footer a:hover{color:var(--ink)}
 .card.with-cover .cta{grid-column:2/-1}
 @media (max-width:760px){.card.with-cover{grid-template-columns:110px 1fr!important}.card.with-cover > p,.card.with-cover .cta{grid-column:1/-1}}
 .card-cover{max-width:170px}
+
+/* v17: header numbers size to their content and never wrap */
+.head-stats:not(.has-wide){grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;justify-content:start}
+.head-stats:not(.has-wide) .stat{padding-right:28px}
+.head-stats .stat b,.head-stats .stat > span{white-space:nowrap}

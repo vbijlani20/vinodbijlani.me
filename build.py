@@ -756,7 +756,20 @@ def build_publications():
     return pg, layout(pg, "publications", "Publications", f"Articles by {PROFILE['name']} for the World Economic Forum, Forbes, CDOTrends and more.", body)
 
 
+def _publisher_list():
+    names = []
+    for b in BOOKS:
+        pub = (b.get("publisher") or "").replace(" Publishers", "")
+        if pub and "Self" not in pub and pub not in names:
+            names.append(pub)
+    order = ["Elsevier", "Springer", "IGI Global", "Nova Science"]
+    names.sort(key=lambda n: order.index(n) if n in order else len(order))
+    return ", ".join(names[:-1]) + " and " + names[-1] if len(names) > 1 else "".join(names)
+
+
 def build_books():
+    global BOOK_PUBLISHERS
+    BOOK_PUBLISHERS = _publisher_list()
     pg = Page("books.html")
     cards = []
     for b in BOOKS:
@@ -773,8 +786,8 @@ def build_books():
   {f'<div class="cta" style="margin-top:auto">{links}</div>' if links else ''}
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
-    body = page_head("05", "Books", "A playbook on sovereign AI, and invited chapters on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [(n_books, "book"), (len(BOOKS) - n_books, "chapters"), (len({b["publisher"] for b in BOOKS if b.get("publisher") and "Self" not in b["publisher"]}), "academic publishers")], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
+    body = page_head("05", "Books", f"Own Your AI, a playbook on sovereign AI, and invited chapters for {BOOK_PUBLISHERS} on smart and sustainable buildings, resilient smart cities, health and STEM education.",
+                     [], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
