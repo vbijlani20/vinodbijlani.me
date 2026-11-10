@@ -358,7 +358,6 @@ def build_home():
     <div class="cta">
       <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Thought leadership</a>
       <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
-      <a class="btn" href="{e(PROFILE['links']['linkedin'])}">LinkedIn</a>
     </div></div>
     <div class="hero-side">{hero_img}
       <div class="stats compact">
