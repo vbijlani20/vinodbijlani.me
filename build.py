@@ -311,7 +311,7 @@ def build_home():
 
     seen, with_photos = set(), []
     for k in KEYNOTES:  # one session per event on the home page
-        if k["photos"] and k["event"] not in seen:
+        if k["photos"] and not k.get("graphic") and k["event"] not in seen:
             seen.add(k["event"]); with_photos.append(k)
     featured = with_photos[:3] or KEYNOTES[:3]
     # Photo strip: one photo each from six other presentations, each linking to its event page
@@ -515,7 +515,7 @@ def build_speaking():
     # Events in pictures: one cover photo per event, linking to the event page with every photo
     events = []
     for k in KEYNOTES:
-        if not k["photos"]:
+        if not k["photos"] or k.get("graphic"):  # graphic: a title card or diagram, not an event photo
             continue
         page = pg.rel("speaking/" + k["slug"] + "/index.html")
         cover = k["photos"][0]
@@ -562,7 +562,7 @@ def build_speaking():
                 thumb = (f'<div class="thumb tile" aria-hidden="true"><span class="t-fmt">{e(fmt)}</span>'
                          f'<b>{e(str(date_key(k.get("date"))[0]))}</b><span class="t-line"></span><span class="t-place">{e(place)}</span></div>')
             badges = "".join([f'<span class="chip">{e(x.capitalize())}</span>' for x in kinds if x != "talk"]
-                             + [f'<span class="chip hot">{len(k["photos"])} photo{"s" if len(k["photos"]) > 1 else ""}</span>' if k["photos"] else "",
+                             + [f'<span class="chip hot">{len(k["photos"])} photo{"s" if len(k["photos"]) > 1 else ""}</span>' if k["photos"] and not k.get("graphic") else "",
                                 '<span class="chip">LinkedIn</span>' if k.get("linkedin") else ""])
             summ = first_para(k["body"], 180)
             lis.append(f"""<li data-record data-kind="{' '.join(kinds)}"><a class="talk-row" href="{pg.rel('speaking/' + k['slug'] + '/index.html')}">

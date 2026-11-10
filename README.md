@@ -91,6 +91,7 @@ open _site/index.html
 
 - Each talk shows one cover photo on the Thought Leadership page; all its photos, with captions, are on the talk's own page.
 - Choose the cover in the talk's `index.md` front matter with `cover: 03.webp` (otherwise the first photo is used). Captions go under `captions:` and an optional credit under `photo_credit:` (`label`, `url`).
+- For a webinar whose only image is a title card or diagram, add `graphic: true`. The image still shows beside the talk and on its page, but stays out of *Events in pictures* and the home photo strip.
 - Photos not tied to one event live in `content/gallery.yml`, grouped by `group:`; mark the group's cover with `cover: true`.
 - The home page photo is `stage_photo` in `content/profile.yml`.
 
