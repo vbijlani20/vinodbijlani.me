@@ -750,12 +750,6 @@ def build_publications():
                  f'<p class="focus-note">Most of this writing appears in Forbes, where Vinod is a member of the Forbes Technology Council: {len(forbes_articles)} articles and {len(forbes_all) - len(forbes_articles)} expert panels. '
                  f'<a href="{e(PROFILE["links"]["forbes"])}">Forbes profile ↗</a></p>'
                  f'<div class="focus-grid two">{"".join(cards)}</div>')
-    for wp in [a for a in ARTICLES if a.get("type") == "whitepaper"]:
-        spotlight += (f'<article class="wp-card"><div><span class="mono">Whitepaper · {e(wp["outlet"])} · {e(date_display(wp["date"]))}</span>'
-                      f'<h3>{e(wp["title"])}</h3><p class="wp-authors">{e(wp.get("authors", ""))}</p><p>{e(wp.get("summary", ""))}</p></div>'
-                      f'<div class="wp-side"><ul>' + "".join(f"<li>{e(x)}</li>" for x in wp.get("covers", [])) + '</ul>'
-                      f'<div class="cta" style="margin-top:0"><a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a>'
-                      + (f'<a class="btn" href="{e(wp["related"]["url"])}">Read on CDOTrends ↗</a>' if wp.get("related") else "") + '</div></div></article>')
     body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
                      [(len(ARTICLES), "publications")], page_art(pg, "publications"),
                      '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
@@ -784,12 +778,25 @@ def build_books():
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
 
+def whitepaper_card(wp):
+    rel = f'<a class="btn" href="{e(wp["related"]["url"])}">Read on CDOTrends ↗</a>' if wp.get("related") else ""
+    return (f'<article class="wp-card"><div><span class="mono">Whitepaper · {e(wp.get("publisher", ""))} · {e(date_display(wp["date"]))}</span>'
+            f'<h3>{e(wp["title"])}</h3><p class="wp-authors">{e(wp.get("authors", ""))}</p><p>{e(wp.get("summary", ""))}</p></div>'
+            f'<div class="wp-side"><ul>' + "".join(f"<li>{e(x)}</li>" for x in wp.get("covers", [])) + '</ul>'
+            f'<div class="cta" style="margin-top:0"><a class="btn primary" href="{e(wp["url"])}">Read the whitepaper ↗</a>{rel}</div></div></article>')
+
+
 def build_papers():
     pg = Page("papers.html")
-    rows = "".join(f'<li>{row(p.get("url", ""), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]), e(p["venue"]))}</li>' for p in PAPERS)
-    body = page_head("06", "Papers", "Conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
-                     [(len(PAPERS), "papers"), (sum(1 for q in PAPERS if "IEEE" in q["venue"]), "IEEE"), (len({str(q["date"])[:4] for q in PAPERS}), "years published")], page_art(pg, "papers")) + \
-        f'<main class="inner"><div class="wrap"><ul class="rows">{rows}</ul></div></main>'
+    wps = [q for q in PAPERS if q.get("type") == "whitepaper"]
+    rows = "".join(f'<li>{row(p.get("url", ""), f"<span class=mono>{e(date_display(p["date"]))}</span>", e(p["title"]), e(p["venue"]))}</li>' for p in PAPERS if p not in wps)
+    featured = ""
+    if wps:
+        featured = ('<div class="sec-head"><span class="stop">→</span><h2>Whitepapers</h2></div>' + "".join(whitepaper_card(w) for w in wps)
+                    + '<div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Conference and journal papers</h2></div>')
+    body = page_head("06", "Papers", "Whitepapers on the AI-centred enterprise, and conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
+                     [(len(PAPERS) - len(wps), "papers"), (len(wps), "whitepaper" if len(wps) == 1 else "whitepapers"), (sum(1 for q in PAPERS if "IEEE" in q["venue"]), "IEEE")], page_art(pg, "papers")) + \
+        f'<main class="inner"><div class="wrap">{featured}<ul class="rows">{rows}</ul></div></main>'
     return pg, layout(pg, "papers", "Papers", f"Papers by {PROFILE['name']}.", body)
 
 

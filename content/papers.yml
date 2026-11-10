@@ -1,4 +1,14 @@
-# Conference and journal papers, newest first.
+# Conference and journal papers and whitepapers, newest first.
+- date: 2026
+  type: whitepaper
+  venue: Whitepaper, Intelligence-Centred Enterprise (ICE) series, published by Alyve
+  publisher: Alyve
+  title: "Leading the AI-Centred Enterprise of the Future: the Intelligence-Centred Enterprise (ICE)"
+  authors: Mark Cameron, Vijayan Seenisamy, Sharma Madiraju and Vinod Bijlani
+  summary: "Getting value from AI means redesigning the operating model around continuous learning, not attaching AI to existing workflows. A 23-page whitepaper on how the enterprise senses, decides and adapts with human purpose and machine-scale experimentation."
+  covers: ["Three pillars: pervasive intelligence, AI-native value creation, the organisation as a living system", "The Metabolic Loop: sense, reason, learn, act", "Five building blocks and the path from AI-enabled to AI-native", "The CFO's Learning Velocity dashboard and an ICE diagnostic"]
+  url: "https://ai-centred-operating-model.netlify.app/"
+  related: {label: "CDOTrends: The Intelligence-Centered Enterprise Is Taking Shape", url: "https://www.cdotrends.com/story/5128/intelligence-centered-enterprise-taking-shape"}
 - {date: 2025-08, title: "Smart Green Buildings for Advancing Corporate Social Responsibility Goals", venue: "Global Corporate Governance (GCGI 2022), Springer CSR, Sustainability, Ethics & Governance series", url: "https://link.springer.com/chapter/10.1007/978-3-031-86330-1_4"}
 - {date: 2023-01, title: "Smart Buildings for Sustainable Smart Cities", venue: "1st International Conference on Advanced Innovations in Smart Cities (ICAISC 2023), Jeddah", url: ""}
 - {date: 2022-11, title: "Net Zero Transformation of Smart Buildings with Gamification and Sustainability Performance Monitoring System", venue: "Future of Smart Cities, IEREK, Malaysia", url: ""}
