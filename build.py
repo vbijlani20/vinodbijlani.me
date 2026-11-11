@@ -149,7 +149,36 @@ NAV = [("experience", "Experience"), ("speaking", "Thought Leadership"), ("blog"
 
 
 # ------------------------------------------------------------------ layout
-def layout(pg, current, title, description, body, image=None):
+# ------------------------------------------------------------------ structured data for search engines and AI assistants
+import json as _json
+PERSON_ID = SITE_URL + "/#person"
+
+
+def person_ld():
+    """schema.org Person: who Vinod is, in a form search engines and AI crawlers read directly."""
+    return {
+        "@context": "https://schema.org", "@type": "Person", "@id": PERSON_ID,
+        "name": PROFILE["name"], "url": SITE_URL + "/", "image": f"{SITE_URL}/{PROFILE['stage_photo']}",
+        "jobTitle": PROFILE["title"], "description": PROFILE["headline"],
+        "worksFor": {"@type": "Organization", "name": PROFILE["company"], "url": "https://www.hpe.com"},
+        "address": {"@type": "PostalAddress", "addressLocality": PROFILE["location"].split(",")[0], "addressCountry": "AU"},
+        "knowsAbout": PROFILE.get("topics", []),
+        "award": ["IBM Master Inventor", "The Open Group Distinguished Architect", "Forbes Technology Council member"],
+        "sameAs": list(PROFILE["links"].values()),
+    }
+
+
+AUTHOR_REF = {"@type": "Person", "@id": PERSON_ID, "name": PROFILE["name"], "url": SITE_URL + "/"}
+
+
+def ld_script(data):
+    if not data:
+        return ""
+    items = data if isinstance(data, list) else [data]
+    return "".join('<script type="application/ld+json">' + _json.dumps(d, ensure_ascii=False).replace("</", "<\\/") + "</script>\n" for d in items)
+
+
+def layout(pg, current, title, description, body, image=None, jsonld=None):
     nav = "".join(
         f'<li><a href="{pg.rel(URLS[s])}"{" aria-current=\"page\"" if s == current else ""}>{e(label)}</a></li>'
         for s, label in NAV)
@@ -170,7 +199,9 @@ def layout(pg, current, title, description, body, image=None):
 <meta property="og:type" content="website">
 <meta property="og:url" content="{e(canonical)}">
 {og_img}
-<link rel="alternate" type="application/rss+xml" title="{e(PROFILE['name'])} blog" href="{pg.rel('feed.xml')}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="{e(PROFILE['name'])}">
+{ld_script(jsonld)}<link rel="alternate" type="application/rss+xml" title="{e(PROFILE['name'])} blog" href="{pg.rel('feed.xml')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -401,7 +432,9 @@ def build_home():
 </div></section>
 </main>"""
     first_photo = next((keynote_photo_rel(k, k["photos"][0]) for k in KEYNOTES if k["photos"]), None)
-    return pg, layout(pg, "home", "Home", f"{PROFILE['name']}: {PROFILE['title']}, {PROFILE['company']}. {PROFILE['headline']}", body, first_photo)
+    website = {"@context": "https://schema.org", "@type": "WebSite", "name": PROFILE["name"], "url": SITE_URL + "/", "author": AUTHOR_REF}
+    return pg, layout(pg, "home", "Home", f"{PROFILE['name']}: {PROFILE['title']}, {PROFILE['company']}. {PROFILE['headline']}", body, first_photo,
+                      [person_ld(), website])
 
 
 def build_experience():
@@ -638,7 +671,19 @@ def build_keynote(k):
 </div>{art}</div></header>
 <main class="inner"><div class="wrap"><div class="prose">{md(k['body'])}</div>{video_embed(k)}{gallery}{rel_html}</div></main>"""
     img = keynote_photo_rel(k, k["photos"][0]) if k["photos"] else None
-    return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img)
+    city = str(k.get("city") or "")
+    ev = {"@context": "https://schema.org", "@type": "Event", "name": f"{k['title']} ({k['event']})", "startDate": str(k["date"]),
+          "url": f"{SITE_URL}/speaking/{k['slug']}", "performer": AUTHOR_REF, "description": f"{k.get('role') or 'Talk'} by {PROFILE['name']} at {k['event']}.",
+          "eventStatus": "https://schema.org/EventScheduled"}
+    if city.lower() == "online":
+        ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
+        ev["location"] = {"@type": "VirtualLocation", "url": f"{SITE_URL}/speaking/{k['slug']}"}
+    elif city:
+        ev["eventAttendanceMode"] = "https://schema.org/OfflineEventAttendanceMode"
+        ev["location"] = {"@type": "Place", "name": city, "address": city}
+    if img:
+        ev["image"] = f"{SITE_URL}/{img}"
+    return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img, ev)
 
 
 SERIES_NAME = "Data centre and AI factory leadership"
@@ -734,7 +779,13 @@ def build_post(p):
   <article class="prose">{md(p['body'])}{rel}</article>
   <div class="side-col{' has-image' if p.get('image') else ''}">{side_image}{infographic(p.get('infographic'))}</div>
 </div>{pager}</div></main>"""
-    return pg, layout(pg, "blog", p["title"], p.get("summary", p["title"]), body, ("blog/" + p["image"]) if p.get("image") else None)
+    post_img = ("blog/" + p["image"]) if p.get("image") else None
+    art = {"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"], "datePublished": str(p.get("date")),
+           "author": AUTHOR_REF, "publisher": AUTHOR_REF, "url": f"{SITE_URL}/blog/{p['slug']}", "mainEntityOfPage": f"{SITE_URL}/blog/{p['slug']}",
+           "description": p.get("summary", p["title"]), "keywords": ", ".join(p.get("tags") or [])}
+    if post_img:
+        art["image"] = f"{SITE_URL}/{post_img}"
+    return pg, layout(pg, "blog", p["title"], p.get("summary", p["title"]), body, post_img, art)
 
 
 FEATURED_OUTLETS = ["World Economic Forum", "Forbes", "The Business Times (Singapore)", "Singapore Business Review", "CDOTrends", "Forbes Brasil"]
@@ -879,8 +930,46 @@ def build_feed():
 
 
 def build_sitemap(paths):
-    urls = "".join(f"<url><loc>{SITE_URL}/{p.replace('index.html', '').replace('.html', '')}</loc></url>" for p in paths)
+    today = dt.date.today().isoformat()
+    urls = "".join(f"<url><loc>{SITE_URL}/{p.replace('index.html', '').replace('.html', '')}</loc><lastmod>{today}</lastmod></url>" for p in paths)
     return f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
+
+
+AI_CRAWLERS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User",
+               "Google-Extended", "PerplexityBot", "Perplexity-User", "Applebot-Extended", "Bingbot"]
+
+
+def build_robots():
+    """Everything is public. AI search, assistant and training crawlers are named explicitly so it's clear they're welcome."""
+    rules = "User-agent: *\nAllow: /\n\n" + "".join(f"User-agent: {b}\nAllow: /\n\n" for b in AI_CRAWLERS)
+    return f"# {PROFILE['name']}: all content may be read, indexed and cited.\n{rules}Sitemap: {SITE_URL}/sitemap.xml\n"
+
+
+def build_llms_txt():
+    """/llms.txt: a plain-text summary and map of the site for AI assistants (llmstxt.org format)."""
+    P = PROFILE
+    L = [f"# {P['name']}", "", f"> {P['title']}, {P['company']}, based in {P['location']}. {P['headline']}", ""]
+    for para in P.get("bio", []):
+        L += [para, ""]
+    L += ["Topics: " + "; ".join(P.get("topics", [])) + ".", ""]
+    L += ["## Profiles", ""] + [f"- [{dict(linkedin='LinkedIn', forbes='Forbes Technology Council', scholar='Google Scholar', researchgate='ResearchGate').get(k, k.title())}]({v})" for k, v in P["links"].items()] + [""]
+    L += ["## Pages", "",
+          f"- [Home]({SITE_URL}/): who Vinod is and what he works on",
+          f"- [Experience]({SITE_URL}/experience): career since {P.get('career_start', 1998)}, roles and projects; building AI solutions since {AI_SINCE}",
+          f"- [Thought Leadership]({SITE_URL}/speaking/): {len(KEYNOTES)} keynotes, panels and talks",
+          f"- [Blog]({SITE_URL}/blog/): {len(POSTS)} posts on data centres, AI factories and AI economics",
+          f"- [Publications]({SITE_URL}/publications): {len(ARTICLES)} articles and interviews (World Economic Forum, Forbes, CDOTrends and more)",
+          f"- [Books]({SITE_URL}/books): {len(BOOKS)} books and chapters, including Own Your AI",
+          f"- [Papers]({SITE_URL}/papers): papers and whitepapers",
+          f"- [Patents]({SITE_URL}/patents): {N_INVENTIONS} inventions, {N_FILINGS} filings", ""]
+    L += ["## Talks", ""] + [
+        f"- [{k['title']}]({SITE_URL}/speaking/{k['slug']}): {k.get('role') or 'Talk'}, {k['event']}" + (f", {k['city']}" if k.get("city") else "") + f", {k['date']}"
+        for k in KEYNOTES] + [""]
+    L += ["## Blog posts", ""] + [f"- [{p['title']}]({SITE_URL}/blog/{p['slug']}): {p.get('date')}" for p in POSTS] + [""]
+    L += ["## Selected articles", ""] + [
+        f"- [{a['title']}]({a['url']}): {a['outlet']}, {a.get('date')}" for a in ARTICLES if a.get("url") and a.get("type") != "panel"] + [""]
+    L += ["## Books", ""] + [f"- {b.get('title')}" + (f" ({b.get('publisher')}, {b.get('year')})" if b.get("publisher") else "") for b in BOOKS] + [""]
+    return "\n".join(L)
 
 
 # ------------------------------------------------------------------ main
@@ -921,7 +1010,8 @@ def main():
     (OUT / "feed.xml").write_text(build_feed(), encoding="utf-8")
     public = [pg.path for pg, _ in pages if pg.path not in ("404.html", "roles.html", "projects.html", "certifications.html", "letter-of-appreciation.html")]
     (OUT / "sitemap.xml").write_text(build_sitemap(public), encoding="utf-8")
-    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
+    (OUT / "robots.txt").write_text(build_robots(), encoding="utf-8")
+    (OUT / "llms.txt").write_text(build_llms_txt(), encoding="utf-8")
     if (ROOT / "CNAME").exists():
         shutil.copy(ROOT / "CNAME", OUT / "CNAME")
     (OUT / ".nojekyll").write_text("")
