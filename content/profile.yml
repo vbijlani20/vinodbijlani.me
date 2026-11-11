@@ -49,9 +49,9 @@ journey:
   - {year: "2003", place: Cincinnati, what: Infrastructure architect, org: Kroger}
   - {year: "2005", place: Pune, what: Retail solution architect, org: IBM}
   - {year: "2008", place: "", what: AI solutions begin, org: "IBM, traffic prediction models", ai: start}
-  - {year: "2009", place: Singapore, what: Chief product architect, org: IBM Intelligent Operations Center}
+  - {year: "2009", place: Pune, what: Product architect, org: IBM Intelligent Operations Center}
   - {year: "2015", place: Singapore, what: Executive architect, org: IBM Smarter Cities}
-  - {year: "2019", place: Singapore, what: AI practice leader, org: Hewlett Packard Enterprise}
+  - {year: "2019", place: Singapore, what: AI practice leader, org: HPE}
   - {year: "2022", place: Melbourne, what: Distinguished Technologist, org: "HPE, Asia Pacific", now: true}
 # Home page photo: Vinod presenting. 'photo' (headshot) is still used for link previews.
 stage_photo: assets/img/vinod-on-stage.webp
