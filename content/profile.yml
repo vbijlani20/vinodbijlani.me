@@ -52,10 +52,10 @@ flagship_talks:  # talk folder names
   - 2026-10-hpe-discover-more-hong-kong-ai-factory
   - 2026-05-sovereign-ai-keynote
   - 2025-01-hpe-innovation-day-ho-chi-minh-city
-featured_articles:  # urls from articles.yml
-  - "https://www.weforum.org/agenda/authors/vinod-bijlani"
-  - "https://www.forbes.com/councils/forbestechcouncil/2026/10/08/which-ai-workload-goes-where-a-cios-guide-to-hybrid-ai/"
-  - "https://www.forbes.com/councils/forbestechcouncil/2026/03/24/why-your-ai-factory-will-fail-without-security-compliance-and-financial-controls-baked-in/"
+featured_articles:  # urls from articles.yml or papers.yml
+  - "https://ai-centred-operating-model.netlify.app/"
+  - "https://www.forbes.com/councils/forbestechcouncil/2026/08/05/every-cio-should-consider-a-hybrid-token-factory-heres-how-to-build-one/"
+  - "https://www.forbes.com/councils/forbestechcouncil/2025/07/30/how-ai-sovereignty-will-reshape-global-enterprise-ai-strategy/"
 
 # Career journey on the Experience page (with cities) and the home page (roles only), oldest first. 'ai: start' marks where the AI work begins;
 # every stop from there on is drawn on the amber track.

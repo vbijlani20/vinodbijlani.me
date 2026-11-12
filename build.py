@@ -369,10 +369,15 @@ def build_home():
 
     by_url = {a["url"]: a for a in ARTICLES if a.get("url")}
     posts_by_slug = {p["slug"]: p for p in POSTS}
-    picks = [by_url[u] for u in PROFILE.get("featured_articles", []) if u in by_url] or [a for a in ARTICLES if a.get("type") == "article"][:3]
+    # Featured perspectives can be articles or papers (e.g. the ICE whitepaper)
+    pick_pool = dict(by_url)
+    for w in PAPERS:
+        if w.get("url"):
+            pick_pool.setdefault(w["url"], {"url": w["url"], "title": w["title"], "date": w.get("date"),
+                                            "outlet": f"Whitepaper · {w['publisher']}" if w.get("publisher") else "Paper"})
+    picks = [pick_pool[u] for u in PROFILE.get("featured_articles", []) if u in pick_pool] or [a for a in ARTICLES if a.get("type") == "article"][:3]
     selected = "".join(
         f'<a class="feat-art" href="{e(a["url"])}"><span class="mono outlet">{e(a["outlet"])}</span><h3>{e(a["title"])}</h3>'
-        + (f'<p>{e(a["summary"])}</p>' if a.get("summary") else "")
         + f'<span class="mono when">{e(date_display(a["date"]))} · Read ↗</span></a>' for a in picks)
     ideas = []
     for n, idea in enumerate(PROFILE.get("signature_ideas", []), 1):
