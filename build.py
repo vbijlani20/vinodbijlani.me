@@ -983,6 +983,19 @@ def build_llms_txt():
     return "\n".join(L)
 
 
+_A_TAG = re.compile(r'<a\s([^>]*?)href="(https?://[^"]+)"([^>]*)>', re.I)
+
+
+def external_links_new_tab(html):
+    """Links to other sites open in a new tab; links within this site stay in the same tab."""
+    def fix(m):
+        before, url, after = m.group(1), m.group(2), m.group(3)
+        if url.startswith(SITE_URL) or "target=" in before + after:
+            return m.group(0)
+        return f'<a {before}href="{url}"{after} target="_blank" rel="noopener">'
+    return _A_TAG.sub(fix, html)
+
+
 # ------------------------------------------------------------------ main
 def main():
     if OUT.exists():
@@ -1004,6 +1017,7 @@ def main():
               redirect("certifications.html", "experience.html", "Experience"), redirect("letter-of-appreciation.html", "index.html", "Home")]
 
     for pg, content in pages:
+        content = external_links_new_tab(content)
         out = OUT / pg.path
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(content, encoding="utf-8")
