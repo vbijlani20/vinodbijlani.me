@@ -824,26 +824,21 @@ def build_publications():
     # Spotlight: AI factories and sovereign AI, the two themes of the body of work
     forbes_all = [a for a in ARTICLES if a["outlet"] == "Forbes"]
     forbes_articles = [a for a in forbes_all if a.get("type") == "article"]
-    focus_defs = [
-        ("ai-factories", "AI Factories", "How enterprises build, run and pay for AI factories: architecture, hybrid placement, security and the economics of tokens, data and FLOPs."),
-        ("sovereign-ai", "Sovereign AI", "Why nations and enterprises want control over their data, models and AI operations, and a practical path from AI dependence to AI sovereignty."),
-    ]
+    by_url = {x["url"]: x for x in ARTICLES if x.get("url")}
     cards = []
-    for i, (key, name, blurb) in enumerate(focus_defs):
-        items = [a for a in ARTICLES if a.get("focus") == key]
-        lis = "".join(f'<li><a href="{e(a["url"])}"><span class="mono">{e(a["outlet"])} · {e(date_display(a["date"]))}</span>{e(a["title"])}</a></li>' for a in items[:6])
-        if len(items) > 6:
-            lis += f'<li class="more"><a href="#all-publications">{len(items) - 6} more in the full list ↓</a></li>'
+    for i, f in enumerate(PROFILE.get("publication_focus", [])):
+        items = [by_url[u] for u in f.get("articles", []) if u in by_url][:3]
+        lis = "".join(f'<li><a href="{e(a["url"])}"><span class="mono">{e(a["outlet"])} · {e(date_display(a["date"]))}</span>{e(a["title"])}</a></li>' for a in items)
         cards.append(f"""<article class="focus-card{' dark' if i == 0 else ''}">
-  <div class="focus-top"><span class="focus-num mono">0{i + 1}</span><span class="mono">{len(items)} publications</span></div>
-  <h3>{e(name)}</h3><p>{e(blurb)}</p>
+  <div class="focus-top"><span class="focus-num mono">0{i + 1}</span></div>
+  <h3>{e(f["name"])}</h3><p>{e(f["blurb"])}</p>
   <ul class="focus-list">{lis}</ul>
 </article>""")
     spotlight = (f'<div class="sec-head"><span class="stop">→</span><h2>Focus areas</h2></div>'
                  f'<p class="focus-note">Most of this writing appears in Forbes, where Vinod is a member of the Forbes Technology Council: {len(forbes_articles)} articles and {len(forbes_all) - len(forbes_articles)} expert panels. '
                  f'<a href="{e(PROFILE["links"]["forbes"])}">Forbes profile ↗</a></p>'
-                 f'<div class="focus-grid two">{"".join(cards)}</div>')
-    body = page_head("04", "Publications", "Articles and expert panels on AI factories and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
+                 f'<div class="focus-grid three">{"".join(cards)}</div>')
+    body = page_head("04", "Publications", "Articles, interviews and expert panels on token factories, AI security, AI data centres and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
                      [(len(ARTICLES), "publications")], page_art(pg, "publications"),
                      '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
         f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" id="all-publications" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
