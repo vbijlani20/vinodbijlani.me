@@ -3,6 +3,8 @@ title: Every AI token has a hidden factory behind it
 date: 2026-09-22
 summary: "Price per million tokens tells you what an application consumes, not how efficiently the infrastructure produces it. That needs another lens: $/FLOP."
 tags: [AI economics, AI factories, Data centres]
+image: media/flop-real-cost-of-ai-compute.gif
+image_alt: "$/FLOP: the real cost of AI compute. Tokens are what we consume, data is what we use, FLOPs are what we produce; what drives $/FLOP, the historical trend and exploding compute demand"
 series: dc
 strand: economics
 related:
