@@ -6,9 +6,9 @@ city: Melbourne
 role: Keynote
 cover: 01.jpg
 captions:
-  01.jpg: Keynote at Yield by Artesian, Melbourne.
-  02.jpg: Building Australia's sovereign AI factory for agriculture.
-  03.jpg: Keynote at the inaugural Yield agrifood innovation summit.
+  01.jpg: 'The agenda: global agtech trends, defining sovereign AI and its maturity model, and agtech case studies from Asia.'
+  02.jpg: 'Beyond the buzz: building Australia''s sovereign AI factory for agriculture.'
+  03.jpg: 'Why sovereign AI is critical for Australian agtech.'
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-katonic-artesian-activity-7401584825419415552-ZMbw
 links:
 - label: Artesian's summit recap

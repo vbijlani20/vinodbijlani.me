@@ -6,7 +6,7 @@ city: Taipei
 role: Keynote
 cover: 01.jpg
 captions:
-  01.jpg: Keynote on stage at HPE Discover More 2026, Taipei.
+  01.jpg: 'Keynote: building a secure, sovereign and agentic AI factory.'
   02.jpg: At the HPE showcase in Taipei.
   03.jpg: With HPE colleagues at the showcase.
   04.jpg: 'A customer session in Taipei: AI is centred around tokens.'

@@ -760,3 +760,8 @@ footer a:hover{color:var(--ink)}
 .feat-art p{font-size:14.5px;line-height:1.5;color:var(--muted);margin:0}
 .feat-art .when{font-size:12px;color:var(--muted);margin-top:auto;padding-top:6px}
 @media (max-width:900px){ .ideas,.feat-arts{grid-template-columns:1fr} }
+/* v24: accent words in home headings, section subtitle, roles journey on home */
+.accent-word{font-family:var(--display);font-style:italic;font-weight:800;color:var(--accent);letter-spacing:-.03em}
+.sec-sub{margin:-10px 0 22px;color:var(--muted);font-size:16px;max-width:60ch}
+.idea .idea-line{font-size:18px;color:var(--muted);font-weight:500}
+.sec-head .sec-sub{grid-column:2;margin:-10px 0 0;font-size:17px}

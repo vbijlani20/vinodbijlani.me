@@ -144,7 +144,7 @@ N_FORBES = sum(1 for a in ARTICLES if a.get("outlet") == "Forbes" and a.get("typ
 
 URLS = {"home": "index.html", "experience": "experience.html", "speaking": "speaking/index.html", "blog": "blog/index.html",
         "publications": "publications.html", "books": "books.html", "papers": "papers.html", "patents": "patents.html"}
-NAV = [("experience", "Experience"), ("speaking", "Thought Leadership"), ("blog", "Blog"), ("publications", "Publications"),
+NAV = [("experience", "Experience"), ("speaking", "Speaking"), ("blog", "Blog"), ("publications", "Publications"),
        ("books", "Books"), ("papers", "Papers"), ("patents", "Patents")]
 
 
@@ -335,9 +335,25 @@ def infographic(ig):
 
 
 # ------------------------------------------------------------------ pages
+def journey_html(heading, show_city=True):
+    """Career journey, oldest first; from the 'ai: start' stop onwards the track turns amber."""
+    stops, in_ai = [], False
+    for j in PROFILE.get("journey", []):
+        in_ai = in_ai or j.get("ai") == "start"
+        cls = " ".join(c for c in ("ai" if in_ai else "", "ai-start" if j.get("ai") == "start" else "", "now" if j.get("now") else "") if c)
+        tag = f'<span class="ai-tag">AI since {e(str(j["year"]))}</span>' if j.get("ai") == "start" else ""
+        place = f'<span class="city">{e(j["place"])}</span>' if show_city and j.get("place") else ""
+        stops.append(f'<li class="{cls}"><span class="yr">{e(str(j["year"]))}</span>{tag}<span class="role">{e(j.get("what", ""))}</span>'
+                     f'<span class="org">{e(j.get("org", ""))}</span>{place}</li>')
+    if not stops:
+        return ""
+    return (f'<section class="journey" aria-label="{e(heading)}"><div class="sec-head"><span class="stop">→</span><h2>{e(heading)}</h2></div>'
+            f'<ol style="--n:{len(stops)}">{"".join(stops)}</ol>'
+            f'<p class="journey-key mono"><span class="k-pre"></span>Infrastructure and architecture <span class="k-ai"></span>Building AI solutions, since {AI_SINCE}</p></section>')
+
+
 def build_home():
     pg = Page("index.html")
-    route = "".join(f'<li><div class="yr">{e(str(r["year"]))}</div><div class="city">{e(r["city"])}</div><div class="what">{e(r["what"])}</div></li>' for r in PROFILE["route"])
     first, last = PROFILE["name"].split(" ", 1)
 
     seen, with_photos = set(), []
@@ -370,10 +386,10 @@ def build_home():
         if idea.get("book"):
             links.append(f'<a class="idea-more" href="{pg.rel(URLS["books"])}">The book: Own Your AI →</a>')
         ideas.append(f'<article class="idea"><span class="idea-no mono">{n:02d}</span><h3>{e(idea["name"])}</h3>'
-                     f'<p class="idea-line">{e(idea["line"])}</p><p class="idea-text">{e(idea["text"])}</p>'
+                     f'<p class="idea-line">{e(idea["line"])}</p>'
                      f'<div class="idea-links">{"".join(links)}</div></article>')
     ideas_html = f"""<section class="block ideas-block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Signature ideas</h2></div>
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">Ideas</em> shaping enterprise AI</h2></div>
   <div class="ideas">{"".join(ideas)}</div>
 </div></section>""" if ideas else ""
     book = next((b for b in BOOKS if b.get("featured")), None)
@@ -387,7 +403,7 @@ def build_home():
 
     explore = [
         ("experience", len(EXPERIENCE), "Experience", "Roles and the projects delivered in each, from Mumbai to Melbourne.", "roles"),
-        ("speaking", len(KEYNOTES), "Thought leadership", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US.", "talks"),
+        ("speaking", len(KEYNOTES), "Speaking", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US.", "talks"),
         ("blog", len(POSTS), "Blog", "Field notes on AI factories, token economics and governance, with infographics.", "posts"),
         ("publications", len(ARTICLES), "Publications", f"Including {N_FORBES} Forbes Technology Council articles.", "publications"),
         ("books", len(BOOKS), "Books", "Own Your AI, plus chapters with Springer, Elsevier, IGI Global and Nova Science.", "titles"),
@@ -406,7 +422,7 @@ def build_home():
     <h1>{e(first)}<span class="last">{e(last)}</span></h1>
     <p class="role"><strong>{e(PROFILE['title'])}, {e(PROFILE['company'])}.</strong> {e(PROFILE['headline'])}</p>
     <div class="cta">
-      <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Thought leadership</a>
+      <a class="btn primary" href="{pg.rel(URLS['speaking'])}">Speaking</a>
       <a class="btn" href="{pg.rel(URLS['blog'])}">Read the blog</a>
     </div></div>
     <div class="hero-side">{hero_img}
@@ -423,7 +439,7 @@ def build_home():
 <main>
 {ideas_html}
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Flagship talks</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">On stage.</em> Moving AI forward</h2><p class="sec-sub">Selected keynotes and conversations with leaders building the future of AI.</p><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
   <div class="talk-grid">{''.join(talks)}</div>
 </div></section>
 {book_html}
@@ -435,10 +451,7 @@ def build_home():
   <div class="sec-head"><span class="stop">→</span><h2>Explore further</h2></div>
   <div class="explore subtle">{cards}</div>
 </div></section>
-<section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>From Mumbai to Melbourne</h2></div>
-  <div class="route" aria-label="Career route"><ol>{route}</ol></div>
-</div></section>
+<section class="block"><div class="wrap">{journey_html("Administrator to AI leader", show_city=False)}</div></section>
 </main>"""
     first_photo = next((keynote_photo_rel(k, k["photos"][0]) for k in KEYNOTES if k["photos"]), None)
     website = {"@context": "https://schema.org", "@type": "WebSite", "name": PROFILE["name"], "url": SITE_URL + "/", "author": AUTHOR_REF}
@@ -472,18 +485,7 @@ def build_experience():
         if r["org"] not in orgs:
             orgs.append(r["org"])
     n_projects = sum(len(r.get("projects", [])) for r in EXPERIENCE)
-    # Career journey: oldest first; from the 'ai: start' stop onwards the track turns amber
-    stops, in_ai = [], False
-    for j in PROFILE.get("journey", []):
-        in_ai = in_ai or j.get("ai") == "start"
-        cls = " ".join(c for c in ("ai" if in_ai else "", "ai-start" if j.get("ai") == "start" else "", "now" if j.get("now") else "") if c)
-        tag = f'<span class="ai-tag">AI since {e(str(j["year"]))}</span>' if j.get("ai") == "start" else ""
-        place = f'<span class="city">{e(j["place"])}</span>' if j.get("place") else ""
-        stops.append(f'<li class="{cls}"><span class="yr">{e(str(j["year"]))}</span>{tag}<span class="role">{e(j.get("what", ""))}</span>'
-                     f'<span class="org">{e(j.get("org", ""))}</span>{place}</li>')
-    journey = (f'<section class="journey" aria-labelledby="journey-h"><div class="sec-head"><span class="stop">→</span><h2 id="journey-h">Career journey</h2></div>'
-               f'<ol style="--n:{len(stops)}">{"".join(stops)}</ol>'
-               f'<p class="journey-key mono"><span class="k-pre"></span>Infrastructure and architecture <span class="k-ai"></span>Building AI solutions, since {AI_SINCE}</p></section>') if stops else ""
+    journey = journey_html("Career journey", show_city=True)
     body = page_head("01", "Experience", f"{YEARS} years from server administration to leading AI practice across Asia Pacific. Building AI solutions since {AI_SINCE}, with the projects delivered along the way.",
                      [(YEARS, "years"), (len(EXPERIENCE), "roles"), (f"Since {AI_SINCE}", "building AI solutions")], page_art(pg, "experience")) + \
         f'<main class="inner"><div class="wrap">{journey}<div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Roles and projects</h2></div><ul class="logos" aria-label="Organisations">{"".join(f"<li>{e(o)}</li>" for o in orgs)}</ul><ol class="timeline">{"".join(items)}</ol></div></main>'
@@ -535,7 +537,7 @@ def build_photo_group(name, items):
     grid = captioned_grid(pg, [("gallery/" + g["file"], g.get("caption", ""), name, None, None) for g in items])
     art = f'<figure class="head-art"><img src="{pg.rel("gallery/" + items[0]["file"])}" alt="{e(items[0].get("caption", ""))}" fetchpriority="high"></figure>'
     body = f"""<header class="page-head with-art"><div class="wrap head-grid"><div class="head-text">
-  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">Photo archive · {len(items)} photos</span></div>
+  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to speaking">←</a><span class="mono">Photo archive · {len(items)} photos</span></div>
   <h1 class="h1-sm">{e(name)}</h1>
   <p class="intro">{e(GROUP_BLURB.get(name, ''))}</p>
 </div>{art}</div></header>
@@ -626,7 +628,7 @@ def build_speaking():
         parts.append(f'<div class="year-group" data-group><div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol></div>')
 
     jump = '<nav class="jump mono" aria-label="On this page"><a href="#events">On stage</a><a href="#all-talks">All talks</a><a href="#archive">Photo archive</a></nav>'
-    body = page_head("02", "Thought Leadership", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
+    body = page_head("02", "Speaking", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
                      [], page_art(pg, "speaking")) + f"""
 <main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
@@ -638,7 +640,7 @@ def build_speaking():
 <div class="ev-grid" data-group>{"".join(archive)}</div>
 <p class="empty" hidden>No talks match. Try a different word or clear the search.</p>
 </div></div></main>"""
-    return pg, layout(pg, "speaking", "Thought Leadership", f"Keynotes, panels and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI, with photos and event details.", body)
+    return pg, layout(pg, "speaking", "Speaking", f"Keynotes, panels and talks by {PROFILE['name']} on AI factories, sovereign AI and agentic AI, with photos and event details.", body)
 
 
 def video_embed(k):
@@ -673,7 +675,7 @@ def build_keynote(k):
         cap = (k.get("captions") or {}).get(k["photos"][0].name) or k["event"]
         art = f'<figure class="head-art"><img src="photos/{e(k["photos"][0].name)}" alt="{e(cap)}" fetchpriority="high"></figure>'
     body = f"""<header class="page-head{' with-art' if art else ''}"><div class="wrap{' head-grid' if art else ''}"><div class="head-text">
-  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to thought leadership">←</a><span class="mono">{e(k.get('role', ''))} · {e(date_display(k.get('date')))}{(' · ' + e(k['city'])) if k.get('city') else ''}</span></div>
+  <div class="crumb"><a class="stop" href="{pg.rel(URLS['speaking'])}" aria-label="Back to speaking">←</a><span class="mono">{e(k.get('role', ''))} · {e(date_display(k.get('date')))}{(' · ' + e(k['city'])) if k.get('city') else ''}</span></div>
   <h1 class="h1-sm">{e(k['title'])}</h1>
   <p class="intro">{e(k['event'])}</p>
   {f'<div class="cta">{btns}</div>' if btns else ''}
@@ -927,7 +929,7 @@ def redirect(path, target, label):
 
 def build_404():
     pg = Page("404.html")
-    body = page_head("?", "Page not found", f'The page you were looking for has moved. Try <a href="/speaking/">Thought Leadership</a>, the <a href="/blog">blog</a> or <a href="/">the home page</a>.', [])
+    body = page_head("?", "Page not found", f'The page you were looking for has moved. Try <a href="/speaking/">Speaking</a>, the <a href="/blog">blog</a> or <a href="/">the home page</a>.', [])
     return pg, layout(pg, "", "Not found", "Page not found", body)
 
 
@@ -965,7 +967,7 @@ def build_llms_txt():
     L += ["## Pages", "",
           f"- [Home]({SITE_URL}/): who Vinod is and what he works on",
           f"- [Experience]({SITE_URL}/experience): career since {P.get('career_start', 1998)}, roles and projects; building AI solutions since {AI_SINCE}",
-          f"- [Thought Leadership]({SITE_URL}/speaking/): {len(KEYNOTES)} keynotes, panels and talks",
+          f"- [Speaking]({SITE_URL}/speaking/): {len(KEYNOTES)} keynotes, panels and talks",
           f"- [Blog]({SITE_URL}/blog/): {len(POSTS)} posts on data centres, AI factories and AI economics",
           f"- [Publications]({SITE_URL}/publications): {len(ARTICLES)} articles and interviews (World Economic Forum, Forbes, CDOTrends and more)",
           f"- [Books]({SITE_URL}/books): {len(BOOKS)} books and chapters, including Own Your AI",

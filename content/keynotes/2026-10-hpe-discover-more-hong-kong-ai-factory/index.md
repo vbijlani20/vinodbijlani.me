@@ -7,7 +7,7 @@ role: Speaker
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-hpediscovermore-tokenfactory-activity-7517895386993168384-2Zm5
 cover: 01.jpg
 captions:
-  01.jpg: Presenting From AI Factory to Token Economy.
+  01.jpg: 'The price of a token is only part of the equation: what matters is the cost of completing a task safely and well.'
   02.jpg: With HPE colleagues and Red Hat at the HPE Discover More showcase.
 ---
 

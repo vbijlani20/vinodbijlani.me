@@ -6,14 +6,14 @@ city: Bangkok
 role: Speaker
 cover: 01.jpg
 captions:
-  01.jpg: 'On stage at the HPE FY26 APAC Solution Sales Bootcamp, Bangkok, 23 February 2026.'
+  01.jpg: 'Opening the session: HPE AI Factory, agentic, secure and compliant.'
   02.jpg: 'The evolution of AI: from model building to sovereign, national AI factories.'
   03.jpg: 'The HPE AI Factory stack, from infrastructure to agents and applications.'
-  04.jpg: Presenting the HPE AI Factory in Bangkok.
-  05.jpg: At the APAC Solution Sales Bootcamp.
-  06.jpg: Presenting the HPE AI Factory in Bangkok.
-  07.jpg: At the APAC Solution Sales Bootcamp.
-  08.jpg: The bootcamp audience in Bangkok.
+  04.jpg: 'Security by design: prompt injection defence, SOC integration and cyber resilience across the stack.'
+  05.jpg: 'Compliance built in: a Data Bill of Materials and traceability, because AI without traceability is a risk.'
+  06.jpg: 'Financial and operational control: token governance, user-level accountability and cost transparency.'
+  07.jpg: 'Agentic workflows that reason, orchestrate and act within governed boundaries.'
+  08.jpg: 'The global AI infrastructure wave: from North America to Europe, with Asia Pacific as the next frontier.'
   09.jpg: Closing the session with the key takeaways.
 linkedin: https://www.linkedin.com/posts/vinodbijlani_hpe-hpeaifactory-hpeunleashai-ugcPost-7435286361835859969-1Xyo/
 ---

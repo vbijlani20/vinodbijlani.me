@@ -9,7 +9,7 @@ cover: 01.jpg
 captions:
   01.jpg: Moderating the panel with Flora Ng (HKU) and Patrick Khong (Hong Kong Jockey Club).
   02.jpg: In conversation with Patrick Khong.
-  03.jpg: Moderating the panel.
+  03.jpg: 'Leading through the AI era: how organisations navigate transformation in an age of intelligence.'
   04.jpg: Leading Through the AI Era at HPE Discover More Hong Kong 2026.
   05.jpg: Patrick Khong sharing the Hong Kong Jockey Club's perspective.
   06.jpg: With the panellists and HPE Hong Kong leaders after the session.

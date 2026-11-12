@@ -6,7 +6,7 @@ city: Bangkok
 role: Speaker
 cover: 01.jpg
 captions:
-  01.jpg: On stage at HPE Discover More AI, Bangkok.
+  01.jpg: 'Enterprise AI spotlight: agentic AI and AI factory architectures.'
   02.jpg: Presenting the HPE AI factory solution.
   03.jpg: 'AI factory use cases: agents for knowledge, data, documents and code.'
   04.jpg: With a colleague at HPE Discover More AI, Bangkok.

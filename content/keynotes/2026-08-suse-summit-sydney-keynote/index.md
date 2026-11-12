@@ -9,7 +9,7 @@ video: https://www.youtube.com/watch?v=YMZ8cdwiWQ8
 captions:
   01.jpg: Presenting the HPE SUSE AI Factory central reference architecture.
   02.jpg: The key design requirements for a distributed AI factory.
-  03.jpg: On stage at SUSE Summit Sydney.
+  03.jpg: 'The shift towards physical AI, and the steps that turn edge AI pilots into enterprise deployments.'
   04.jpg: The audience capturing the reference architecture.
 links:
 - label: Watch the recording

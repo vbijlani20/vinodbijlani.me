@@ -6,7 +6,7 @@ city: ''
 role: Keynote
 cover: 01.webp
 captions:
-  01.webp: Delivering a keynote on sovereign AI.
+  01.webp: 'AI factory use cases for agents: knowledge management, a secure LLM gateway and coding assistants.'
   02.webp: Presenting AI Factory use cases for agents.
 ---
 

@@ -11,7 +11,7 @@
     });
   });
 
-  // Search and format filter on the Thought Leadership page
+  // Search and format filter on the Speaking page
   var q = document.getElementById('tl-q');
   if (q) {
     var records = Array.prototype.slice.call(document.querySelectorAll('#tl-results [data-record]'));

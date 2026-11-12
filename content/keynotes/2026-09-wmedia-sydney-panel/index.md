@@ -9,9 +9,9 @@ photo_credit:
   label: W.Media
   url: https://old.clouddatacenter.events/events/sydney-cdc-2026/
 captions:
-  01.webp: 'Joining the Neo Clouds vs Hyperscalers panel discussion.'
+  01.webp: 'It''s not cloud versus on-premises: matching each workload to hyperscaler, neocloud, self-hosted, colocation or edge.'
   02.webp: 'The panellists and moderator.'
-  03.webp: 'Panel discussion on the Sydney stage.'
+  03.webp: 'Cost, latency, sovereignty and scale as the deciding factors for AI workload placement.'
   04.jpg: 'Panel announcement: Neo Clouds vs Hyperscalers.'
 links:
 - label: Convention page

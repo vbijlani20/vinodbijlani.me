@@ -9,12 +9,12 @@ photo_credit:
   label: W.Media
   url: https://old.clouddatacenter.events/events/sydney-cdc-2026/
 captions:
-  01.webp: 'Vinod addressing the Sydney audience.'
-  02.webp: 'Presenting on the Sydney convention stage.'
-  03.webp: 'Answering a question from the stage.'
-  04.webp: 'The keynote from the audience.'
-  05.webp: 'Discussing the presentation with the audience.'
-  06.webp: 'Three views of the Sydney keynote.'
+  01.webp: 'Physical AI starts with edge AI: models that perceive and decide locally.'
+  02.webp: 'Agents at the edge that reason and act without waiting on the cloud.'
+  03.webp: 'Micro AI factories in stores and on factory floors, governed from a central AI factory.'
+  04.webp: 'Edge use cases: real-time video analytics, visual quality inspection and predictive maintenance.'
+  05.webp: 'Design requirements for a distributed AI factory: AI-specific security and data sovereignty by design.'
+  06.webp: 'A virtual store manager: an agentic assistant at the edge that answers most questions locally, even offline.'
 links:
 - label: Convention page
   url: https://old.clouddatacenter.events/events/sydney-cdc-2026/
