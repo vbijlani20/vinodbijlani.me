@@ -3,6 +3,8 @@ title: "Nearly 250 GW by 2030: the geography of compute is being redrawn"
 date: 2026-09-19
 summary: "Mapping data centre capacity across 29 markets to 2030. Capacity is the headline; power, economics and value per megawatt decide how much becomes productive AI compute."
 tags: [Data centres, AI infrastructure, Asia Pacific]
+image: media/data-centre-capacity-2030.webp
+image_alt: "Worldwide data centre total capacity by 2030 across 29 markets: United States 114–118 GW, China about 60 GW, India 8–10 GW"
 series: dc
 strand: buildout
 infographic:

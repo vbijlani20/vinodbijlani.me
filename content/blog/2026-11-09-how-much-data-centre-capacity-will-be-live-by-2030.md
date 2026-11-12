@@ -3,6 +3,8 @@ title: "More than 100 GW planned in six markets. How much will be live by 2030?"
 date: 2026-11-09
 summary: "Pipelines are not delivery schedules. Grid delays, cancellations and the gap between announced and energised capacity are already showing."
 tags: [Data centres, AI infrastructure, Power]
+image: media/planned-capacity-additions-2030.gif
+image_alt: "Global data centre capacity: planned capacity additions by 2030, led by the United States (45–47 GW), China (26–28 GW), Malaysia (8.5 GW) and Australia (about 8 GW)"
 series: dc
 strand: buildout
 infographic:
