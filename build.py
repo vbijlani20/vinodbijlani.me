@@ -741,9 +741,9 @@ def build_blog_index():
         ps = sorted([p for p in series if p.get("strand") == key], key=lambda p: date_key(p["date"]), reverse=True)
         if not ps:
             continue
-        lis = "".join(f'<li><a href="{pg.rel("blog/" + p["slug"] + "/index.html")}"><span class="mono">{e(date_display(p["date"]))}</span>{e(p["title"])}</a></li>' for p in ps)
+        lis = "".join(f'<li><a href="{pg.rel("blog/" + p["slug"] + "/index.html")}"><span class="mono">{e(date_display(p["date"]))}</span>{e(p["title"])}</a></li>' for p in ps[:3])  # newest three
         cats.append(f"""<article class="focus-card{' dark' if i == 0 else ''}">
-  <div class="focus-top"><span class="focus-num mono">0{i + 1}</span><span class="mono">{len(ps)} posts</span></div>
+  <div class="focus-top"><span class="focus-num mono">0{i + 1}</span></div>
   <h3>{e(name)}</h3><p>{e(blurb)}</p>
   <ul class="focus-list">{lis}</ul>
 </article>""")
