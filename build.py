@@ -439,7 +439,7 @@ def build_home():
 <main>
 {ideas_html}
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">On stage.</em> Moving AI forward</h2><p class="sec-sub">Selected keynotes and conversations with leaders building the future of AI.</p><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">On Stage.</em> Moving AI Forward</h2><p class="sec-sub">Selected keynotes and conversations with leaders building the future of AI.</p><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
   <div class="talk-grid">{''.join(talks)}</div>
 </div></section>
 {book_html}
@@ -632,7 +632,7 @@ def build_speaking():
                      [], page_art(pg, "speaking")) + f"""
 <main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
-<div class="sec-head" id="events"><span class="stop">→</span><h2>On stage</h2></div>
+<div class="sec-head" id="events"><span class="stop">→</span><h2><em class="accent-word">On Stage.</em> Moving AI Forward</h2></div>
 <div class="ev-grid" data-group>{"".join(events)}</div>
 <div class="sec-head" id="all-talks" style="margin-top:64px"><span class="stop">→</span><h2>All keynotes, panels and talks</h2></div>
 {"".join(parts)}

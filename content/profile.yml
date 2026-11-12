@@ -50,8 +50,8 @@ signature_ideas:
 # Home page selections. The full collections stay on their own pages.
 flagship_talks:  # talk folder names
   - 2026-10-hpe-discover-more-hong-kong-ai-factory
-  - 2026-10-hpe-discover-more-taipei
-  - 2026-09-wmedia-sydney
+  - 2026-05-sovereign-ai-keynote
+  - 2025-01-hpe-innovation-day-ho-chi-minh-city
 featured_articles:  # urls from articles.yml
   - "https://www.weforum.org/agenda/authors/vinod-bijlani"
   - "https://www.forbes.com/councils/forbestechcouncil/2026/10/08/which-ai-workload-goes-where-a-cios-guide-to-hybrid-ai/"
