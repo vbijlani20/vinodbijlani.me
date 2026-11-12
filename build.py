@@ -344,25 +344,38 @@ def build_home():
     for k in KEYNOTES:  # one session per event on the home page
         if k["photos"] and not k.get("graphic") and k["event"] not in seen:
             seen.add(k["event"]); with_photos.append(k)
-    featured = with_photos[:3] or KEYNOTES[:3]
-    # Photo strip: one photo each from six other presentations, each linking to its event page
-    strip = []
-    for k in with_photos[3:9]:
-        cap = (k.get("captions") or {}).get(k["photos"][0].name) or k["event"]
-        strip.append(f'<a href="{pg.rel("speaking/" + k["slug"] + "/index.html")}" title="{e(k["event"])}"><img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="{e(cap)}" loading="lazy"><span>{e(k["event"])}</span></a>')
-    stage_strip = f'<div class="stage-strip">{"".join(strip)}</div>' if strip else ""
+    by_slug = {k["slug"]: k for k in KEYNOTES}
+    featured = [by_slug[x] for x in PROFILE.get("flagship_talks", []) if x in by_slug] or with_photos[:3] or KEYNOTES[:3]
     talks = []
     for k in featured:
         img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
         talks.append(f'<a class="talk-card" href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{img}<div class="body"><span class="mono">{e(date_display(k.get("date")))} · {e(k.get("role", ""))}</span><h3>{e(k["title"])}</h3><p>{e(k["event"])}</p></div></a>')
 
-    posts = "".join(
-        f'<a class="talk-card" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">'
-        + (f'<img class="ig-thumb" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">' if p.get("image") else post_visual(pg, p))
-        + f'<div class="body"><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p></div></a>'
-        for p in POSTS[:3])
-    forbes = [a for a in ARTICLES if a.get("type") == "article"][:4]
-    writing = "".join(f'<li>{row(a["url"], f"<span class=mono>{e(a["outlet"])} · {e(date_display(a["date"]))}</span>", e(a["title"]))}</li>' for a in forbes)
+    by_url = {a["url"]: a for a in ARTICLES if a.get("url")}
+    posts_by_slug = {p["slug"]: p for p in POSTS}
+    picks = [by_url[u] for u in PROFILE.get("featured_articles", []) if u in by_url] or [a for a in ARTICLES if a.get("type") == "article"][:3]
+    selected = "".join(
+        f'<a class="feat-art" href="{e(a["url"])}"><span class="mono outlet">{e(a["outlet"])}</span><h3>{e(a["title"])}</h3>'
+        + (f'<p>{e(a["summary"])}</p>' if a.get("summary") else "")
+        + f'<span class="mono when">{e(date_display(a["date"]))} · Read ↗</span></a>' for a in picks)
+    ideas = []
+    for n, idea in enumerate(PROFILE.get("signature_ideas", []), 1):
+        links = []
+        a = by_url.get(idea.get("article"))
+        if a:
+            links.append(f'<a class="idea-read" href="{e(a["url"])}"><span class="mono">Read in {e(a["outlet"])}</span>{e(a["title"])} ↗</a>')
+        p = posts_by_slug.get(idea.get("post"))
+        if p:
+            links.append(f'<a class="idea-more" href="{pg.rel("blog/" + p["slug"] + "/index.html")}">On the blog: {e(p["title"])} →</a>')
+        if idea.get("book"):
+            links.append(f'<a class="idea-more" href="{pg.rel(URLS["books"])}">The book: Own Your AI →</a>')
+        ideas.append(f'<article class="idea"><span class="idea-no mono">{n:02d}</span><h3>{e(idea["name"])}</h3>'
+                     f'<p class="idea-line">{e(idea["line"])}</p><p class="idea-text">{e(idea["text"])}</p>'
+                     f'<div class="idea-links">{"".join(links)}</div></article>')
+    ideas_html = f"""<section class="block ideas-block"><div class="wrap">
+  <div class="sec-head"><span class="stop">→</span><h2>Signature ideas</h2></div>
+  <div class="ideas">{"".join(ideas)}</div>
+</div></section>""" if ideas else ""
     book = next((b for b in BOOKS if b.get("featured")), None)
     book_html = ""
     if book:
@@ -408,19 +421,15 @@ def build_home():
   </div>
 </div></header>
 <main>
+{ideas_html}
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Thought leadership</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All keynotes, panels and talks →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2>Flagship talks</h2><div class="more"><a href="{pg.rel(URLS['speaking'])}">All {len(KEYNOTES)} keynotes, panels and talks →</a></div></div>
   <div class="talk-grid">{''.join(talks)}</div>
-  {stage_strip}
 </div></section>
 {book_html}
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>From the blog</h2><div class="more"><a href="{pg.rel(URLS['blog'])}">All posts →</a></div></div>
-  <div class="talk-grid">{posts}</div>
-</div></section>
-<section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Latest publications</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
-  <ul class="rows">{writing}</ul>
+  <div class="sec-head"><span class="stop">→</span><h2>Selected articles</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
+  <div class="feat-arts">{selected}</div>
 </div></section>
 <section class="block"><div class="wrap">
   <div class="sec-head"><span class="stop">→</span><h2>Explore further</h2></div>

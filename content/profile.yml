@@ -31,6 +31,44 @@ links:
   scholar: https://scholar.google.com/citations?hl=en&user=mbQ-sRUAAAAJ
   researchgate: https://www.researchgate.net/profile/Vinod-Bijlani-2
 
+# Signature ideas on the home page: a short explanation and one strong article each.
+# 'article' must match the url of an entry in articles.yml; 'post' is a blog post slug (optional).
+signature_ideas:
+  - name: Token factory
+    line: Run AI as a governed, metered service, not just a GPU estate.
+    text: >-
+      The industry is solving the compute problem. Enterprises now face the consumption problem.
+      A token factory turns AI capacity into a governed, metered service: the right model for each workload,
+      quotas and accountability per user, and cost you can see, across on-premises and cloud.
+    article: "https://www.forbes.com/councils/forbestechcouncil/2026/08/05/every-cio-should-consider-a-hybrid-token-factory-heres-how-to-build-one/"
+    post: where-ai-gets-hard
+  - name: Datanomics
+    line: The token bill is only half of what AI really costs.
+    text: >-
+      Tokenomics measures the cost of generating answers. Datanomics measures the cost of making data usable,
+      governed and trusted: getting it AI-ready, keeping it fresh and secure, and paying for errors and rework.
+      In the enterprise, datanomics will outweigh tokenomics.
+    article: "https://www.forbes.com/councils/forbestechcouncil/2026/08/31/the-unit-economics-of-ai-why-datanomics-will-outweigh-tokenomics/"
+    post: tokenomics-and-datanomics
+  - name: Sovereign AI
+    line: Own your data, your models and your future.
+    text: >-
+      Sovereignty is not all or nothing. A four-level framework takes enterprises and nations from AI dependence
+      to strategic independence, deciding where data lives, who controls the models and which workloads must run
+      on infrastructure you govern.
+    article: "https://www.forbes.com/councils/forbestechcouncil/2025/10/27/from-ai-dependence-to-ai-sovereignty-a-four-level-framework-for-strategic-independence/"
+    book: true
+
+# Home page selections. The full collections stay on their own pages.
+flagship_talks:  # talk folder names
+  - 2026-10-hpe-discover-more-hong-kong-ai-factory
+  - 2026-10-hpe-discover-more-taipei
+  - 2026-09-wmedia-sydney
+featured_articles:  # urls from articles.yml
+  - "https://www.weforum.org/agenda/authors/vinod-bijlani"
+  - "https://www.forbes.com/councils/forbestechcouncil/2026/10/08/which-ai-workload-goes-where-a-cios-guide-to-hybrid-ai/"
+  - "https://www.forbes.com/councils/forbestechcouncil/2026/03/24/why-your-ai-factory-will-fail-without-security-compliance-and-financial-controls-baked-in/"
+
 # The career line on the home page
 route:
   - {year: "1998", city: Mumbai, what: Kvaerner}
