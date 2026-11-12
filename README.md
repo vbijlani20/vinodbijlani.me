@@ -97,7 +97,7 @@ open _site/index.html
 
 ## Data centre and AI factory series (blog)
 
-- Add `series: dc` to a post's front matter to include it in the "Data centre and AI factory leadership" section at the top of the blog, and `strand: buildout | factory | economics` to choose its group.
+- Add `series: dc` to a post's front matter to include it in the "My Thoughts on AI factory build-outs" section at the top of the blog, and `strand: buildout | factory | economics` to choose its group.
 - Posts without an infographic image get a tile built from the `infographic` title and headline `stat`.
 
 ## Page header photos

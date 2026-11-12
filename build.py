@@ -702,7 +702,7 @@ def build_keynote(k):
     return pg, layout(pg, "speaking", k["title"], f"{k['event']}: {k['title']}", body, img, ev)
 
 
-SERIES_NAME = "Data centre and AI factory leadership"
+SERIES_NAME = "My Thoughts on AI factory build-outs"
 STRANDS = [
     ("buildout", "The global buildout", "Where data centre capacity sits today, where it is heading by 2030, and how much of the pipeline will actually be delivered."),
     ("factory", "Inside the AI factory", "From data halls to rack-scale AI: power, cooling, orchestration and the move to the edge."),
