@@ -444,7 +444,7 @@ def build_home():
 </div></section>
 {book_html}
 <section class="block"><div class="wrap">
-  <div class="sec-head"><span class="stop">→</span><h2>Selected articles</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">Perspectives</em> That Matter</h2><div class="more"><a href="{pg.rel(URLS['publications'])}">All {len(ARTICLES)} publications →</a></div></div>
   <div class="feat-arts">{selected}</div>
 </div></section>
 <section class="block"><div class="wrap">
