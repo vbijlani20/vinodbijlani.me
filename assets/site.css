@@ -906,3 +906,16 @@ footer a:hover{color:var(--ink)}
 .stack-mini .stackviz{grid-template-rows:repeat(8,25px)}
 .stack-mini .stackviz .layer{display:flex;align-items:center;padding:0 10px}
 .stack-mini .bracket{overflow:hidden}
+/* v28: header stack framed like the header photos: dark panel, amber offset */
+.stack-mini{background:#0f1720;border-color:#0f1720;color:#e7edf3;box-shadow:14px 16px 0 -2px var(--accent);margin-right:14px}
+.stack-mini figcaption{color:#9fb0c0}
+.stack-mini .stackviz .layer{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#e7edf3}
+.stack-mini .stackviz .layer.l-infra{background:linear-gradient(90deg,rgba(242,169,0,.22),rgba(255,255,255,.06))}
+.stack-mini .stackviz.has-active .layer.lit{background:rgba(255,255,255,.12)}
+.stack-mini .bracket{border-left-color:rgba(255,255,255,.22)}
+.stack-mini .bracket i{color:#8597a8}
+.stack-mini .bracket.on{border-left-color:var(--accent)}
+.stack-mini .bracket.on i{color:#fff}
+.stack-mini .stack-now{color:#9fb0c0}
+.stack-mini .stack-now b{color:var(--accent)}
+.js .stack-mini .stackviz.in.has-active .layer:not(.lit),.stack-mini .stackviz.has-active .layer:not(.lit){opacity:.5}
