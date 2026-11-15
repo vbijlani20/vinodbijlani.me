@@ -113,20 +113,18 @@
   }
   var viz = document.querySelector('.stackviz');
   if (viz) {
-    var layers = viz.querySelectorAll('.layer'), chips = document.querySelectorAll('.svc-chip'), brackets = viz.querySelectorAll('.bracket');
-    var timer = null, cur = -1;
+    var layers = viz.querySelectorAll('.layer'), brackets = viz.querySelectorAll('.bracket'), now = document.querySelector('.stack-now');
+    var timer = null, cur = -1, hint = now ? now.textContent : '';
     function show(svc) {
       cur = svc;
-      var from = svc < 0 ? null : +chips[svc].getAttribute('data-from');
+      var br = svc < 0 ? null : brackets[svc], from = br ? +br.getAttribute('data-from') : null;
       viz.classList.toggle('has-active', svc >= 0);
       layers.forEach(function (l) { l.classList.toggle('lit', from !== null && +l.getAttribute('data-i') >= from); });
-      chips.forEach(function (c, i) { c.classList.toggle('on', i === svc); c.setAttribute('aria-pressed', i === svc ? 'true' : 'false'); });
-      brackets.forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-svc') === svc); });
+      brackets.forEach(function (b, i) { b.classList.toggle('on', i === svc); b.setAttribute('aria-pressed', i === svc ? 'true' : 'false'); });
+      if (now) now.innerHTML = br ? '<b>' + br.getAttribute('data-name') + '</b> includes the highlighted layers' : hint;
     }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
-    function pick(svc) { stop(); show(cur === svc ? -1 : svc); }
-    chips.forEach(function (c) { c.addEventListener('click', function () { pick(+c.getAttribute('data-svc')); }); });
-    brackets.forEach(function (b) { b.addEventListener('click', function () { pick(+b.getAttribute('data-svc')); }); });
+    brackets.forEach(function (b, i) { b.addEventListener('click', function () { stop(); show(cur === i ? -1 : i); }); });
     onView(viz, function () {
       viz.classList.add('in');
       if (reduce) return;
@@ -134,8 +132,8 @@
       setTimeout(function () {
         if (cur !== -1) return;
         show(0);
-        timer = setInterval(function () { i++; if (i >= chips.length) { stop(); show(-1); return; } show(i); }, 1800);
-      }, 1200);
+        timer = setInterval(function () { i++; if (i >= brackets.length) { stop(); show(-1); return; } show(i); }, 1800);
+      }, 1100);
     });
   }
   var scale = document.querySelector('.scale');

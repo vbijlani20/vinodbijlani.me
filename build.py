@@ -563,17 +563,20 @@ def build_stack():
     n = len(layers)
     nsvc = len(S["services"])
     # services: the narrowest (GPU-as-a-service) sits next to the stack
-    chips, brackets = [], []
+    brackets = []
     for j, sv in enumerate(S["services"]):
         f = idx[sv["from"]]
-        chips.append(f'<button type="button" class="svc-chip" data-from="{f}" data-svc="{j}">{e(sv["name"])}</button>')
-        brackets.append(f'<button type="button" class="bracket" data-from="{f}" data-svc="{j}" tabindex="-1" aria-hidden="true" '
+        brackets.append(f'<button type="button" class="bracket" data-from="{f}" data-svc="{j}" data-name="{e(sv["name"])}" '
+                        f'aria-label="{e(sv["name"])}: show the layers it includes" '
                         f'style="grid-column:{nsvc - j};grid-row:{f + 1} / {n + 1}"><i>{e(sv["name"].replace("-as-a-service", "-aaS"))}</i></button>')
     rows = "".join(
-        f'<div class="layer l-{l["key"]}" data-i="{i}" style="grid-column:{nsvc + 1};grid-row:{i + 1};--d:{(n - 1 - i) * 90}ms">'
-        f'<h3>{e(l["name"])}</h3><ul>{"".join(f"<li>{e(x)}</li>" for x in l["items"])}</ul></div>' for i, l in enumerate(layers))
-    stackviz = f"""<div class="svc-chips" role="group" aria-label="Show what each service includes">{''.join(chips)}</div>
-<div class="stackviz" style="--svc:{nsvc}">{''.join(brackets)}{rows}</div>"""
+        f'<div class="layer l-{l["key"]}" data-i="{i}" title="{e(", ".join(l["items"]))}" style="grid-column:{nsvc + 1};grid-row:{i + 1};--d:{(n - 1 - i) * 80}ms">'
+        f'<b>{e(l["name"])}</b></div>' for i, l in enumerate(layers))
+    stackviz = f"""<figure class="stack-mini" aria-label="Building blocks of an agentic AI factory">
+<figcaption class="mono">Building blocks of an agentic AI factory</figcaption>
+<div class="stackviz" style="--svc:{nsvc}">{''.join(brackets)}{rows}</div>
+<p class="stack-now mono" aria-live="off">Tap a bracket to see what each service includes</p>
+</figure>"""
 
     steps = []
     for k, st in enumerate(S["scale"], 1):
@@ -633,13 +636,8 @@ def build_stack():
 </figure>"""
 
     body = page_head("02", "The AI Stack", e(S["intro"]),
-                     [(f"Since {AI_SINCE}", "building AI solutions"), ("12 kW → 12 MW", "AI factory designs"), (str(n), "layers, end to end")])
+                     [(f"Since {AI_SINCE}", "building AI solutions"), ("12 kW → 12 MW", "AI factory designs")], art=stackviz)
     body += f"""<main class="inner stack-page"><div class="wrap">
-<section class="stack-sec">
-  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">Building blocks</em> of an agentic AI factory</h2>
-    <p class="sec-sub">Every layer I design for, from the agents people use to the infrastructure underneath. Pick a service to see which layers it includes.</p></div>
-  {stackviz}
-</section>
 <section class="stack-sec">
   <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">From 12 kW</em> to 12 MW</h2>
     <p class="sec-sub">The same principles at every size. What changes is power density, cooling, the fabric and how the factory is governed.</p></div>

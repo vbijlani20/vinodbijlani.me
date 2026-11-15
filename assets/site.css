@@ -872,3 +872,26 @@ footer a:hover{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){
   .js .stackviz .layer,.js .scale .scale-bar span{transition:none}
 }
+/* v26: compact building-blocks stack in the AI Stack page header */
+.stack-mini{margin:0;padding:16px 16px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.stack-mini figcaption{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.stack-mini .stackviz{grid-template-columns:repeat(var(--svc),18px) 1fr;column-gap:3px;row-gap:5px}
+.stack-mini .bracket{border-left-width:2px;border-radius:6px 0 0 6px}
+.stack-mini .bracket i{font-size:9px;left:2px;bottom:3px}
+.stack-mini .layer{display:block;padding:6px 10px;border-left-width:4px;border-radius:8px}
+.stack-mini .layer b{font-size:13px;font-weight:600;line-height:1.2}
+.stack-now{font-size:11px;color:var(--muted);margin:10px 0 0;min-height:1.4em}
+.stack-now b{color:var(--ink)}
+@media (max-width:700px){
+  .stack-mini .stackviz{grid-template-columns:repeat(var(--svc),14px) 1fr}
+  .stack-mini .bracket{display:block}
+  .stack-mini .bracket i{display:none}
+  .stack-mini .layer{grid-column:auto}
+}
+@media (max-width:760px){
+  .stack-mini .stackviz{grid-template-columns:repeat(var(--svc),12px) minmax(0,1fr)}
+  .stack-mini .stackviz .bracket{display:block}
+  .stack-mini .stackviz .bracket i{display:none}
+  .stack-mini .stackviz .layer{grid-column:calc(var(--svc) + 1)!important;display:block}
+}
+.head-grid > *{min-width:0}.stack-mini{max-width:100%;box-sizing:border-box}
