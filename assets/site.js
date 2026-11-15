@@ -101,3 +101,64 @@
   scrim.addEventListener('click', function () { set(false); });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && nav.classList.contains('menu-open')) set(false); });
 })();
+
+// The AI Stack: build-in on scroll, service highlighting, request trace
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function onView(el, fn) {
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { fn(); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (x) { if (x.isIntersecting) { fn(); io.disconnect(); } }); }, { threshold: 0.2 });
+    io.observe(el);
+  }
+  var viz = document.querySelector('.stackviz');
+  if (viz) {
+    var layers = viz.querySelectorAll('.layer'), chips = document.querySelectorAll('.svc-chip'), brackets = viz.querySelectorAll('.bracket');
+    var timer = null, cur = -1;
+    function show(svc) {
+      cur = svc;
+      var from = svc < 0 ? null : +chips[svc].getAttribute('data-from');
+      viz.classList.toggle('has-active', svc >= 0);
+      layers.forEach(function (l) { l.classList.toggle('lit', from !== null && +l.getAttribute('data-i') >= from); });
+      chips.forEach(function (c, i) { c.classList.toggle('on', i === svc); c.setAttribute('aria-pressed', i === svc ? 'true' : 'false'); });
+      brackets.forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-svc') === svc); });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function pick(svc) { stop(); show(cur === svc ? -1 : svc); }
+    chips.forEach(function (c) { c.addEventListener('click', function () { pick(+c.getAttribute('data-svc')); }); });
+    brackets.forEach(function (b) { b.addEventListener('click', function () { pick(+b.getAttribute('data-svc')); }); });
+    onView(viz, function () {
+      viz.classList.add('in');
+      if (reduce) return;
+      var i = 0;
+      setTimeout(function () {
+        if (cur !== -1) return;
+        show(0);
+        timer = setInterval(function () { i++; if (i >= chips.length) { stop(); show(-1); return; } show(i); }, 1800);
+      }, 1200);
+    });
+  }
+  var scale = document.querySelector('.scale');
+  onView(scale, function () { scale.classList.add('in'); });
+
+  var arch = document.querySelector('.arch');
+  if (arch) {
+    var trace = arch.querySelector('[data-trace]');
+    var words = [
+      'A request arrives from an app, through the operator network and the security edge.',
+      'The AI gateway checks the API key, applies quotas and meters every token.',
+      'Guardrails check the prompt on the way in and the response on the way out.',
+      'A model runtime picks up the request on the GPU cluster.',
+      'GPU workers generate the tokens, talking over the 800G east-west fabric.',
+      'Models and data stream from parallel storage over the north-south network.'
+    ];
+    var step = -1, t = null;
+    function go() {
+      step = (step + 1) % words.length;
+      arch.querySelectorAll('.on').forEach(function (x) { x.classList.remove('on'); });
+      arch.querySelectorAll('[data-step="' + step + '"]').forEach(function (x) { x.classList.add('on'); });
+      trace.textContent = words[step];
+    }
+    if (!reduce) onView(arch, function () { go(); t = setInterval(go, 2600); });
+  }
+})();

@@ -1,0 +1,57 @@
+# The AI Stack page. Product and customer names are deliberately left out.
+
+intro: >-
+  From AI code in 2008 to the data hall today. I design AI factories layer by layer, from the agents
+  people use down to the GPUs, fabrics, cooling and power underneath, at any scale from 12 kW to 12 MW.
+
+# Building blocks of an agentic AI factory, top layer first.
+layers:
+  - {key: agents, name: AI agents, items: [Customer service, Virtual assistant / copilot, Retail store manager, Manufacturing expert operator, Healthcare claims agent, Insurance claims agent]}
+  - {key: security, name: AI security and governance, items: [Security, Logging, Validation, Explainability, Governance, Guardrails]}
+  - {key: tooling, name: AI and LLM tooling, items: [Prompt template management, No-code copilot / RAG, Agent builder, Blueprints]}
+  - {key: data, name: Data and integration, items: [ETL / ELT, Secure connectors, Secure MCP servers, Data pipelines]}
+  - {key: modelops, name: Model operations, items: [Model management, Automated experimentation, Tuning, Deploy and serve]}
+  - {key: models, name: Foundation models, items: [Open-weight models, Closed models, Traditional ML]}
+  - {key: platform, name: Software platform, items: [Containers and orchestration, Development environments, Database and storage services, Event processing]}
+  - {key: infra, name: AI-native hybrid infrastructure, items: [Compute accelerators, Low-latency network, High-performance storage]}
+
+# What each layer of the stack can be offered as, as a service. 'from' is the highest layer it includes.
+services:
+  - {name: GPU-as-a-service, from: platform}
+  - {name: AI lab-as-a-service, from: models}
+  - {name: LLM-as-a-service, from: modelops}
+  - {name: Fine-tuning-as-a-service, from: tooling}
+  - {name: Token-as-a-service, from: security}
+  - {name: AI apps-as-a-service, from: agents}
+
+# Designing from 12 kW to 12 MW
+scale:
+  - power: "12 kW"
+    name: One GPU server
+    what: Eight GPUs in a single node. A lab, a proof of concept or a first private model.
+    design: [Air or direct liquid cooling, Standard rack power, Local NVMe and a shared file system, A single 400G uplink]
+  - power: "130 kW"
+    name: One rack-scale system
+    what: A rack that behaves like one giant GPU. Density rules out air cooling.
+    design: [Direct liquid cooling to the chip, Coolant distribution units, Busbar power at 100 kW+ per rack, Scale-up GPU interconnect inside the rack]
+  - power: "1 MW"
+    name: A scalable unit
+    what: A pod of racks sized as a repeatable building block, often delivered as a modular data centre.
+    design: [Rail-optimised 800G east-west fabric, Separate 400G north-south and storage networks, Parallel storage with GPU-direct access, Multi-tenant Kubernetes and a token gateway]
+  - power: "12 MW"
+    name: An AI factory
+    what: Many scalable units in a purpose-built hall. Power, heat and governance now decide the design.
+    design: [Medium-voltage power and on-site distribution, Facility water loops and heat rejection, Spine-level fabric across pods, Sovereign operations, metering and chargeback]
+
+case:
+  title: Inside a sovereign token factory
+  who: A national telecom operator in Asia
+  summary: >-
+    A sovereign AI platform that serves models to the operator's own applications and enterprise customers as a
+    governed, metered token service, running on a dedicated GPU cluster inside the country.
+  did:
+    - Designed the path from internet edge to GPU, with firewalls, load balancers and a 400G border gateway in front of the platform.
+    - Built a multi-tenant token service with an OpenAI-compatible gateway, API keys, quotas, metering and inline prompt and response guardrails.
+    - Ran inference on bare-metal Kubernetes GPU workers behind a highly available control plane, with several model runtimes side by side.
+    - Separated three fabrics, an 800G InfiniBand east-west GPU fabric, a 400G converged north-south network and out-of-band management, plus a parallel file system with GPU-direct storage.
+    - Integrated the operator's own identity, PKI, secrets, SIEM and scanning services so the platform fits existing security operations.

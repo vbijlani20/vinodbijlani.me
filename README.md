@@ -103,3 +103,7 @@ open _site/index.html
 ## Page header photos
 
 Each section page shows a photo on the right of its title, set under `page_photos` in `content/profile.yml` (`src` as served on the site, `alt`, and optional `pos` to choose the crop, e.g. "50% 30%"). Books shows the book cover and Patents a numbers panel. Event pages use their cover photo automatically.
+
+## The AI Stack page
+
+`content/stack.yml` holds the stack layers, the as-a-service brackets, the 12 kW to 12 MW steps and the case study text. Keep product and customer names out of it.

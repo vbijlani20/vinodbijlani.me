@@ -142,9 +142,9 @@ OFFICE_NAMES = dict(US="United States", WO="WIPO (PCT)", EP="Europe", JP="Japan"
 YEARS = dt.date.today().year - int(PROFILE.get("career_start", 1998))
 N_FORBES = sum(1 for a in ARTICLES if a.get("outlet") == "Forbes" and a.get("type") == "article")
 
-URLS = {"home": "index.html", "experience": "experience.html", "speaking": "speaking/index.html", "blog": "blog/index.html",
+URLS = {"home": "index.html", "experience": "experience.html", "stack": "stack.html", "speaking": "speaking/index.html", "blog": "blog/index.html",
         "publications": "publications.html", "books": "books.html", "papers": "papers.html", "patents": "patents.html"}
-NAV = [("experience", "Experience"), ("speaking", "Speaking"), ("blog", "Blog"), ("publications", "Publications"),
+NAV = [("experience", "Experience"), ("stack", "AI Stack"), ("speaking", "Speaking"), ("blog", "Blog"), ("publications", "Publications"),
        ("books", "Books"), ("papers", "Papers"), ("patents", "Patents")]
 
 
@@ -408,6 +408,7 @@ def build_home():
 
     explore = [
         ("experience", len(EXPERIENCE), "Experience", "Roles and the projects delivered in each, from Mumbai to Melbourne.", "roles"),
+        ("stack", "12 kW → 12 MW", "The AI Stack", "How I design AI factories, from agents and models down to GPUs, fabrics, cooling and power.", "AI factory designs"),
         ("speaking", len(KEYNOTES), "Speaking", "Keynotes, panels and papers across Asia Pacific, the Middle East and the US.", "talks"),
         ("blog", len(POSTS), "Blog", "Field notes on AI factories, token economics and governance, with infographics.", "posts"),
         ("publications", len(ARTICLES), "Publications", f"Including {N_FORBES} Forbes Technology Council articles.", "publications"),
@@ -550,6 +551,111 @@ def build_photo_group(name, items):
     return pg, layout(pg, "speaking", name, f"{name}: photos of {PROFILE['name']}.", body, "gallery/" + items[0]["file"])
 
 
+STACK = yaml.safe_load((CONTENT / "stack.yml").read_text(encoding="utf-8"))
+
+
+def build_stack():
+    """The AI Stack: building blocks, 12 kW to 12 MW, and an anonymised token factory case study."""
+    pg = Page("stack.html")
+    S = STACK
+    layers = S["layers"]
+    idx = {l["key"]: i for i, l in enumerate(layers)}
+    n = len(layers)
+    nsvc = len(S["services"])
+    # services: the narrowest (GPU-as-a-service) sits next to the stack
+    chips, brackets = [], []
+    for j, sv in enumerate(S["services"]):
+        f = idx[sv["from"]]
+        chips.append(f'<button type="button" class="svc-chip" data-from="{f}" data-svc="{j}">{e(sv["name"])}</button>')
+        brackets.append(f'<button type="button" class="bracket" data-from="{f}" data-svc="{j}" tabindex="-1" aria-hidden="true" '
+                        f'style="grid-column:{nsvc - j};grid-row:{f + 1} / {n + 1}"><i>{e(sv["name"].replace("-as-a-service", "-aaS"))}</i></button>')
+    rows = "".join(
+        f'<div class="layer l-{l["key"]}" data-i="{i}" style="grid-column:{nsvc + 1};grid-row:{i + 1};--d:{(n - 1 - i) * 90}ms">'
+        f'<h3>{e(l["name"])}</h3><ul>{"".join(f"<li>{e(x)}</li>" for x in l["items"])}</ul></div>' for i, l in enumerate(layers))
+    stackviz = f"""<div class="svc-chips" role="group" aria-label="Show what each service includes">{''.join(chips)}</div>
+<div class="stackviz" style="--svc:{nsvc}">{''.join(brackets)}{rows}</div>"""
+
+    steps = []
+    for k, st in enumerate(S["scale"], 1):
+        steps.append(f"""<article class="scale-step" style="--w:{k * 25}%;--d:{(k - 1) * 120}ms">
+  <div class="scale-bar"><span></span></div>
+  <p class="scale-power">{e(st['power'])}</p><h3>{e(st['name'])}</h3><p class="scale-what">{e(st['what'])}</p>
+  <ul>{''.join(f'<li>{e(x)}</li>' for x in st['design'])}</ul>
+</article>""")
+
+    C = S["case"]
+    did = "".join(f"<li>{e(x)}</li>" for x in C["did"])
+    def node(title, sub="", step=None, cls=""):
+        st = f' data-step="{step}"' if step is not None else ""
+        return f'<div class="an {cls}"{st}><b>{e(title)}</b>{f"<span>{e(sub)}</span>" if sub else ""}</div>'
+    edge = "".join(node(t, s_, 0 if i == 0 else None) for i, (t, s_) in enumerate([
+        ("End users", "Apps · APIs"), ("Operator network", "Internet"), ("Firewall", "HA pair"),
+        ("Load balancer", "HA pair"), ("Web app firewall", "Planned"), ("Border gateway", "400G")]))
+    chips_ = lambda xs: "".join(f"<span>{e(x)}</span>" for x in xs)
+    arch = f"""<figure class="arch" aria-label="Deployment architecture of a sovereign token factory, with product names removed">
+<div class="az az-edge" data-step="0"><p class="az-h mono">Edge and security</p>
+  <div class="aflow">{edge}</div>
+  <div class="an an-side"><b>Admin access</b><span>HTTPS console · 1G out-of-band</span></div>
+</div>
+<p class="alink l-front"><span>400G front-end</span></p>
+<div class="az az-platform"><p class="az-h mono">AI platform · token factory</p>
+  <div class="aplat">
+    <div class="an an-card"><b>Platform hosts · HA</b><span>Three virtualisation hosts for token-factory controllers, guardrail engine, observability, registry, jump host and management</span></div>
+    <div class="an an-card an-wide"><b>Data plane · token factory pods on the GPU cluster</b>
+      <div class="abar ab-gw" data-step="1"><b>AI gateway</b> OpenAI-compatible API · keys · quotas · metering</div>
+      <div class="abar ab-gr" data-step="2"><b>Guardrails</b> inline prompt and response checks</div>
+      <div class="aruntimes" data-step="3"><span class="mono">Model runtimes</span>{chips_(["Inference microservices", "Distributed inference", "Open-source LLM serving"])}</div>
+    </div>
+    <div class="an an-card"><b>Kubernetes control plane</b><span>Three masters, highly available</span></div>
+    <div class="an an-card"><b>Fabric and storage management</b><span>InfiniBand fabric manager · storage and cluster management</span></div>
+  </div>
+</div>
+<p class="alink l-sched"><span>schedules GPU workers</span></p>
+<div class="az az-compute">
+  <div class="an an-card an-gpu" data-step="4"><b>GPU compute · bare-metal Kubernetes workers</b>
+    <div class="aspec">{chips_(["8 GPUs per node", "800G east-west per GPU", "2 × 400G north-south DPU", "Local NVMe", "GPU partitioning", "Storage client on every node"])}</div></div>
+  <div class="an an-card an-sto" data-step="5"><b>Parallel file system · all-flash NVMe</b>
+    <div class="aspec">{chips_(["POSIX", "S3", "NFS", "GPU-direct storage", "2 × 400G per node"])}</div></div>
+  <div class="an an-card an-plan"><b>Kubernetes backup</b><span>Planned</span></div>
+</div>
+<div class="alinks"><p class="alink l-ew"><span>800G east-west</span></p><p class="alink l-ns"><span>400G north-south</span></p><p class="alink l-st"><span>400G storage</span></p><p class="alink l-oob"><span>1G out-of-band</span></p></div>
+<div class="az az-fabric"><p class="az-h mono">Network fabric</p>
+  <div class="afab">
+    <div class="an an-card f-ew" data-step="4"><b>East-west GPU back-end</b><span>800G InfiniBand · rail-optimised leaf–spine</span></div>
+    <div class="an an-card f-ns" data-step="5"><b>North-south converged</b><span>400G Ethernet for storage, management and API · leaf–spine</span></div>
+    <div class="an an-card f-oob"><b>Out-of-band management</b><span>1G management and BMC for every server</span></div>
+  </div>
+</div>
+<div class="az az-shared"><p class="az-h mono">Operator-provided services</p>
+  <div class="aspec">{chips_(["Identity · SSO · MFA", "DNS", "NTP", "PKI", "Secrets vault", "SIEM", "SMTP relay", "Vulnerability scanning", "Image scanning"])}</div>
+</div>
+<figcaption class="arch-trace" aria-live="off"><span class="mono">Follow a request</span><b data-trace>Watch a request move through the factory.</b></figcaption>
+</figure>"""
+
+    body = page_head("02", "The AI Stack", e(S["intro"]),
+                     [(f"Since {AI_SINCE}", "building AI solutions"), ("12 kW → 12 MW", "AI factory designs"), (str(n), "layers, end to end")])
+    body += f"""<main class="inner stack-page"><div class="wrap">
+<section class="stack-sec">
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">Building blocks</em> of an agentic AI factory</h2>
+    <p class="sec-sub">Every layer I design for, from the agents people use to the infrastructure underneath. Pick a service to see which layers it includes.</p></div>
+  {stackviz}
+</section>
+<section class="stack-sec">
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">From 12 kW</em> to 12 MW</h2>
+    <p class="sec-sub">The same principles at every size. What changes is power density, cooling, the fabric and how the factory is governed.</p></div>
+  <div class="scale">{''.join(steps)}</div>
+</section>
+<section class="stack-sec">
+  <div class="sec-head"><span class="stop">→</span><h2><em class="accent-word">Case study.</em> {e(C['title'])}</h2>
+    <p class="sec-sub">{e(C['who'])}. {e(C['summary'])}</p></div>
+  <div class="case-grid"><div><p class="mono case-k">What I designed</p><ul class="case-did">{did}</ul>
+    <p class="case-note">Product and customer names are left out. Speeds and topology are as deployed.</p></div></div>
+  {arch}
+</section>
+</div></main>"""
+    return pg, layout(pg, "stack", "The AI Stack", "How Vinod Bijlani designs AI factories from 12 kW to 12 MW: the building blocks of an agentic AI factory and a sovereign token factory case study.", body)
+
+
 def build_speaking():
     pg = Page("speaking/index.html")
     years = sorted({str(date_key(k.get("date"))[0]) for k in KEYNOTES})
@@ -633,7 +739,7 @@ def build_speaking():
         parts.append(f'<div class="year-group" data-group><div class="year-mark">{y}</div><ol class="timeline" style="margin-bottom:12px">{"".join(lis)}</ol></div>')
 
     jump = '<nav class="jump mono" aria-label="On this page"><a href="#events">On stage</a><a href="#all-talks">All talks</a><a href="#archive">Photo archive</a></nav>'
-    body = page_head("02", "Speaking", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
+    body = page_head("03", "Speaking", "Keynotes, panels, papers and executive round tables on AI factories, sovereign AI, AI economics and smart cities. Each event lists the date, city, role, what was discussed and where to read more.",
                      [], page_art(pg, "speaking")) + f"""
 <main class="inner"><div class="wrap">{jump}
 <div id="tl-results">
@@ -757,7 +863,7 @@ def build_blog_index():
         + f'<div><span class="mono">{e(date_display(p["date"]))}</span><h3>{e(p["title"])}</h3><p>{e(p.get("summary", ""))}</p>'
         + '<div class="chips">' + "".join(f"<span class=chip>{e(t)}</span>" for t in (p.get("tags") or [])[:3]) + '</div></div>'
         + post_visual(pg, p) + '</a></li>' for p in POSTS)
-    body = page_head("03", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
+    body = page_head("04", "Blog", "Field notes from customer conversations, conferences and the AI infrastructure build-out, each with an infographic summary.",
                      [(len(POSTS), "posts")], page_art(pg, "blog"),
                      '<span class="mono">Themes</span>' + " · ".join(f'<a href="#data-centres">{e(name)}</a>' for _, name, _ in STRANDS)) + \
         f'<main class="inner"><div class="wrap">{hub}<div class="sec-head" style="margin-top:64px"><span class="stop">→</span><h2>All posts</h2></div><ul class="post-list">{rows}</ul></div></main>'
@@ -838,7 +944,7 @@ def build_publications():
                  f'<p class="focus-note">Most of this writing appears in Forbes, where Vinod is a member of the Forbes Technology Council: {len(forbes_articles)} articles and {len(forbes_all) - len(forbes_articles)} expert panels. '
                  f'<a href="{e(PROFILE["links"]["forbes"])}">Forbes profile ↗</a></p>'
                  f'<div class="focus-grid three">{"".join(cards)}</div>')
-    body = page_head("04", "Publications", "Articles, interviews and expert panels on token factories, AI security, AI data centres and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
+    body = page_head("05", "Publications", "Articles, interviews and expert panels on token factories, AI security, AI data centres and sovereign AI for the Forbes Technology Council, CDOTrends, The Business Times and more.",
                      [(len(ARTICLES), "publications")], page_art(pg, "publications"),
                      '<span class="mono">Published in</span>' + " · ".join(e(o) for o in FEATURED_OUTLETS) + f" and {outlets - len(FEATURED_OUTLETS)} more") + \
         f'<main class="inner"><div class="wrap">{spotlight}<div class="sec-head" id="all-publications" style="margin-top:64px"><span class="stop">→</span><h2>All publications</h2></div><p class="note" style="margin:0 0 24px"><strong>Looking for the blog?</strong> Posts written for this site are on the <a href="{pg.rel(URLS["blog"])}">blog</a>.</p><div class="filters" role="group" aria-label="Filter by topic">{buttons}</div><ul class="rows" data-filterable>{rows}</ul></div></main>'
@@ -875,7 +981,7 @@ def build_books():
   {f'<div class="cta" style="margin-top:auto">{links}</div>' if links else ''}
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
-    body = page_head("05", "Books", f"Own Your AI, a playbook on sovereign AI, and invited chapters for {BOOK_PUBLISHERS} on smart and sustainable buildings, resilient smart cities, health and STEM education.",
+    body = page_head("06", "Books", f"Own Your AI, a playbook on sovereign AI, and invited chapters for {BOOK_PUBLISHERS} on smart and sustainable buildings, resilient smart cities, health and STEM education.",
                      [], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
@@ -897,7 +1003,7 @@ def build_papers():
     if wps:
         featured = ('<div class="sec-head"><span class="stop">→</span><h2>Whitepapers</h2></div>' + "".join(whitepaper_card(w) for w in wps)
                     + '<div class="sec-head" style="margin-top:56px"><span class="stop">→</span><h2>Conference and journal papers</h2></div>')
-    body = page_head("06", "Papers", "Whitepapers on the AI-centred enterprise, and conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
+    body = page_head("07", "Papers", "Whitepapers on the AI-centred enterprise, and conference and journal papers on smart buildings, net zero, 5G traffic management and intelligent transport.",
                      [(len(PAPERS) - len(wps), "papers"), (len(wps), "whitepaper" if len(wps) == 1 else "whitepapers"), (sum(1 for q in PAPERS if "IEEE" in q["venue"]), "IEEE")], page_art(pg, "papers")) + \
         f'<main class="inner"><div class="wrap">{featured}<ul class="rows">{rows}</ul></div></main>'
     return pg, layout(pg, "papers", "Papers", f"Papers by {PROFILE['name']}.", body)
@@ -913,7 +1019,7 @@ def build_patents():
             n = len(inv["filings"])
             cards.append(f'<article class="patent"><h3>{e(inv["title"])}</h3><div class="count">{n}<small>{"filing" if n == 1 else "filings"}</small></div><div class="filings">{fl}</div></article>')
         parts.append(f'<div class="group-title">{e(g["group"])} <span class="mono">{len(g["inventions"])} inventions</span></div><div class="grid2">{"".join(cards)}</div>')
-    body = page_head("07", "Patents", f"AI, machine learning and data analytics inventions since {AI_SINCE}: smart transportation, retail, interactive media and networks, filed with IBM from {FIRST_FILING} to {LAST_FILING}. IBM Master Inventor.",
+    body = page_head("08", "Patents", f"AI, machine learning and data analytics inventions since {AI_SINCE}: smart transportation, retail, interactive media and networks, filed with IBM from {FIRST_FILING} to {LAST_FILING}. IBM Master Inventor.",
                      [], f'<figure class="head-art patent-art" aria-hidden="true"><div class="pa-lead"><b>Since {AI_SINCE}</b><span>inventing in AI, machine learning and analytics</span></div><div><b>{N_FILINGS}</b><span>patent filings</span></div><div><b>{N_INVENTIONS}</b><span>inventions</span></div><div><b>{len(OFFICES)}</b><span>patent offices</span></div><p class="mono">IBM Master Inventor · {" · ".join(OFFICES)}</p></figure>') + \
         f'<main class="inner"><div class="wrap">{"".join(parts)}<p class="note">Each filing links to its record on WIPO Patentscope.</p></div></main>'
     return pg, layout(pg, "patents", "Patents", f"Patents by {PROFILE['name']}, IBM Master Inventor.", body)
@@ -967,6 +1073,7 @@ def build_llms_txt():
     L += ["## Pages", "",
           f"- [Home]({SITE_URL}/): who Vinod is and what he works on",
           f"- [Experience]({SITE_URL}/experience): career since {P.get('career_start', 1998)}, roles and projects; building AI solutions since {AI_SINCE}",
+          f"- [The AI Stack]({SITE_URL}/stack): how Vinod designs AI factories from 12 kW to 12 MW, the building blocks of an agentic AI factory, and an anonymised sovereign token factory case study",
           f"- [Speaking]({SITE_URL}/speaking/): {len(KEYNOTES)} keynotes, panels and talks",
           f"- [Blog]({SITE_URL}/blog/): {len(POSTS)} posts on data centres, AI factories and AI economics",
           f"- [Publications]({SITE_URL}/publications): {len(ARTICLES)} articles and interviews (World Economic Forum, Forbes, CDOTrends and more)",
@@ -1007,7 +1114,7 @@ def main():
         elif f.is_dir():
             shutil.copytree(f, OUT / "assets" / f.name)
 
-    pages = [build_home(), build_experience(), build_speaking(), build_blog_index(), build_publications(),
+    pages = [build_home(), build_experience(), build_stack(), build_speaking(), build_blog_index(), build_publications(),
              build_books(), build_papers(), build_patents(), build_404()]
     pages += [build_keynote(k) for k in KEYNOTES]
     pages += [build_photo_group(n, items) for n, items in GALLERY_GROUPS.items()]
