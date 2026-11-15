@@ -895,3 +895,14 @@ footer a:hover{color:var(--ink)}
   .stack-mini .stackviz .layer{grid-column:calc(var(--svc) + 1)!important;display:block}
 }
 .head-grid > *{min-width:0}.stack-mini{max-width:100%;box-sizing:border-box}
+/* v27: shorter header stack */
+.stack-mini{padding:12px 14px 10px}
+.stack-mini figcaption{margin:0 0 7px;font-size:10.5px}
+.stack-mini .stackviz{row-gap:3px}
+.stack-mini .stackviz .layer{padding:3px 10px;border-radius:6px;border-left-width:4px}
+.stack-mini .layer b{font-size:12.5px;line-height:1.35}
+.stack-mini .bracket i{font-size:8.5px;bottom:2px}
+.stack-now{margin:7px 0 0;font-size:10.5px}
+.stack-mini .stackviz{grid-template-rows:repeat(8,25px)}
+.stack-mini .stackviz .layer{display:flex;align-items:center;padding:0 10px}
+.stack-mini .bracket{overflow:hidden}
