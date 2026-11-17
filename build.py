@@ -980,7 +980,7 @@ def build_books():
 </article>""")
     n_books = sum(1 for b in BOOKS if b["kind"] == "Book")
     body = page_head("06", "Books", f"Own Your AI, a playbook on sovereign AI, and invited chapters for {BOOK_PUBLISHERS} on smart and sustainable buildings, resilient smart cities, health and STEM education.",
-                     [], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
+                     [], f'<figure class="head-art natural"><img src="{pg.rel("assets/img/vinod-own-your-ai-wide.webp")}" alt="Vinod Bijlani holding a launch copy of Own Your AI at the HPE stand, NVIDIA GTC 2026"></figure>') + \
         f'<main class="inner"><div class="wrap"><div class="grid2">{"".join(cards)}</div></div></main>'
     return pg, layout(pg, "books", "Books", f"Books and chapters by {PROFILE['name']}, including Own Your AI.", body)
 
