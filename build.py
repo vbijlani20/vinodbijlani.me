@@ -182,7 +182,7 @@ def layout(pg, current, title, description, body, image=None, jsonld=None):
     nav = "".join(
         f'<li><a href="{pg.rel(URLS[s])}"{" aria-current=\"page\"" if s == current else ""}>{e(label)}</a></li>'
         for s, label in NAV)
-    full_title = PROFILE["name"] if current == "home" else f"{title} · {PROFILE['name']}"
+    full_title = PROFILE.get("home_title", PROFILE["name"]) if current == "home" else f"{title} · {PROFILE['name']}"
     links = PROFILE["links"]
     canonical = SITE_URL + "/" + ("" if pg.path == "index.html" else pg.path.replace("index.html", "").replace(".html", ""))
     og_img = f'<meta property="og:image" content="{SITE_URL}/{image}">' if image else ""
@@ -190,7 +190,7 @@ def layout(pg, current, title, description, body, image=None, jsonld=None):
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">{f'<meta name="google-site-verification" content="{e(PROFILE["google_verification"])}">' if PROFILE.get("google_verification") else ""}
 <title>{e(full_title)}</title>
 <meta name="description" content="{e(description)}">
 <link rel="canonical" href="{e(canonical)}">
