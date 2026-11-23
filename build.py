@@ -194,6 +194,11 @@ def layout(pg, current, title, description, body, image=None, jsonld=None):
 <title>{e(full_title)}</title>
 <meta name="description" content="{e(description)}">
 <link rel="canonical" href="{e(canonical)}">
+<link rel="icon" href="{pg.rel('favicon.ico')}" sizes="48x48">
+<link rel="icon" href="{pg.rel('assets/icons/favicon.svg')}" type="image/svg+xml">
+<link rel="icon" href="{pg.rel('assets/icons/favicon-32.png')}" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="{pg.rel('assets/icons/apple-touch-icon.png')}">
+<meta name="theme-color" content="#14202B">
 <meta property="og:title" content="{e(full_title)}">
 <meta property="og:description" content="{e(description)}">
 <meta property="og:type" content="website">
@@ -1144,6 +1149,8 @@ def main():
     (OUT / "llms.txt").write_text(build_llms_txt(), encoding="utf-8")
     if (ROOT / "CNAME").exists():
         shutil.copy(ROOT / "CNAME", OUT / "CNAME")
+    # Browsers also ask for /favicon.ico on their own, so keep a copy at the root
+    shutil.copy(ROOT / "assets" / "icons" / "favicon.ico", OUT / "favicon.ico")
     (OUT / ".nojekyll").write_text("")
     print(f"Built {len(pages)} pages into {OUT}: {len(KEYNOTES)} talks, {len(POSTS)} posts, {len(ARTICLES)} publications, "
           f"{sum(len(k['photos']) for k in KEYNOTES)} photos")
