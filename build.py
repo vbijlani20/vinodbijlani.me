@@ -369,7 +369,7 @@ def build_home():
     featured = [by_slug[x] for x in PROFILE.get("flagship_talks", []) if x in by_slug] or with_photos[:3] or KEYNOTES[:3]
     talks = []
     for k in featured:
-        img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
+        img = f'<img src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="{e(PROFILE['name'] + ' speaking at ' + k['event'])}" loading="lazy">' if k["photos"] else '<div class="ph" aria-hidden="true"></div>'
         talks.append(f'<a class="talk-card" href="{pg.rel("speaking/" + k["slug"] + "/index.html")}">{img}<div class="body"><span class="mono">{e(date_display(k.get("date")))} · {e(k.get("role", ""))}</span><h3>{e(k["title"])}</h3><p>{e(k["event"])}</p></div></a>')
 
     by_url = {a["url"]: a for a in ARTICLES if a.get("url")}
@@ -725,7 +725,7 @@ def build_speaking():
         for k in talks:
             kinds = talk_kinds(k)
             if k["photos"]:
-                thumb = f'<img class="thumb" src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="" loading="lazy">'
+                thumb = f'<img class="thumb" src="{pg.rel(keynote_photo_rel(k, k["photos"][0]))}" alt="{e(PROFILE['name'] + ' speaking at ' + k['event'])}" loading="lazy">'
             else:  # designed tile until a photo is added to the talk's folder
                 place = (k.get("city") or "").replace("ICC ", "") or ("Online" if "webinar" in kinds else "")
                 fmt = {"keynote": "Keynote", "panel": "Panel", "webinar": "Webinar"}.get(next((x for x in kinds if x != "talk"), ""), "Talk")
@@ -822,7 +822,7 @@ STRANDS = [
 def post_visual(pg, p):
     """Infographic image if the post has one, otherwise a tile built from its infographic headline."""
     if p.get("image"):
-        return f'<img class="pv" src="{pg.rel("blog/" + p["image"])}" alt="" loading="lazy">'
+        return f'<img class="pv" src="{pg.rel("blog/" + p["image"])}" alt="{e(p['title'] + ' by ' + PROFILE['name'])}" loading="lazy">'
     ig = p.get("infographic") or {}
     stat = (ig.get("stat") or {}).get("value")
     if stat:
@@ -1049,10 +1049,32 @@ def build_feed():
 <description>{e(PROFILE['headline'])}</description>{items}</channel></rss>"""
 
 
-def build_sitemap(paths):
+IMG_SRC = re.compile(r'<img\b[^>]*?\bsrc="([^"]+)"')
+
+
+def page_images(path, content):
+    """Absolute URLs of the images on a page, so Google Images can find them through the sitemap."""
+    import posixpath
+    seen = []
+    for src in IMG_SRC.findall(content):
+        src = html.unescape(src).split("?")[0]
+        if src.startswith(("http://", "https://", "data:")):
+            continue
+        url = SITE_URL + "/" + posixpath.normpath(posixpath.join(posixpath.dirname(path), src)).lstrip("/")
+        if url not in seen:
+            seen.append(url)
+    return seen
+
+
+def build_sitemap(pages):
+    """pages: list of (path, html). Lists each page plus the images on it."""
     today = dt.date.today().isoformat()
-    urls = "".join(f"<url><loc>{SITE_URL}/{p.replace('index.html', '').replace('.html', '')}</loc><lastmod>{today}</lastmod></url>" for p in paths)
-    return f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
+    urls = ""
+    for path, content in pages:
+        imgs = "".join(f"<image:image><image:loc>{e(u)}</image:loc></image:image>" for u in page_images(path, content))
+        urls += f"<url><loc>{SITE_URL}/{path.replace('index.html', '').replace('.html', '')}</loc><lastmod>{today}</lastmod>{imgs}</url>"
+    return ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            f'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">{urls}</urlset>')
 
 
 AI_CRAWLERS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User",
@@ -1143,7 +1165,7 @@ def main():
     if (CONTENT / "blog" / "media").exists():
         shutil.copytree(CONTENT / "blog" / "media", OUT / "blog" / "media", dirs_exist_ok=True)
     (OUT / "feed.xml").write_text(build_feed(), encoding="utf-8")
-    public = [pg.path for pg, _ in pages if pg.path not in ("404.html", "roles.html", "projects.html", "certifications.html", "letter-of-appreciation.html")]
+    public = [(pg.path, content) for pg, content in pages if pg.path not in ("404.html", "roles.html", "projects.html", "certifications.html", "letter-of-appreciation.html")]
     (OUT / "sitemap.xml").write_text(build_sitemap(public), encoding="utf-8")
     (OUT / "robots.txt").write_text(build_robots(), encoding="utf-8")
     (OUT / "llms.txt").write_text(build_llms_txt(), encoding="utf-8")
